@@ -229,7 +229,7 @@ harvm3 <- stan(file = "carbon_model.stan", data = dat3,
                control=list(adapt_delta=0.99, max_treedepth=20), 
                iter=4000, chains=3, seed=4492)
 # sometimes a MCMC proposal is rejected; 
-# but they are accepted often enough that model is running
+# but they are accepted often enough
 
 setwd("../Analysis")
 
