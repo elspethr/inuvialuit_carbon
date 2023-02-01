@@ -1,0 +1,65 @@
+﻿Group,Type,Name,Edible_weight,Source,Note
+Seal,Ringed,Seal - Ringed,13,Usher 2000,Includes 2.5 kg blubber
+Whale,Beluga,Whale - Beluga,136.4,Berger 1977,Muktuk only
+Bear,Polar,Bear - Polar,114,Usher 1971,
+Caribou,Barren-Ground,Caribou - Barren Ground,36.5,New,Average of Porcupine and Bluenose
+Caribou,Porcupine,Caribou - Porcupine,37,Usher 2000,
+Caribou,Bluenose,Caribou - Bluenose,36,Usher 2000,
+Caribou,Union Dolphin,Caribou - Union Dolphin,33,Usher 2000,Barren-ground but smaller
+Caribou,Banks Island,Caribou - Banks Island,29,Usher 2000,
+Caribou,Peary,Caribou - Peary,29,New,Assume Banks Island are Peary
+Caribou,Woodland,Caribou - Woodland,58.6,New,Takes ratio of Berger's estimates (provided in Ashley 2000) adjusted to Usher's more conservative approach
+Muskox,,Muskox,69,Usher 2000,
+Moose,,Moose,140,Usher 2000,
+Dall's sheep,,Dall's sheep,23,Usher 2000,
+Hare,Arctic,Hare - Arctic,2.9,Usher 2000,
+Hare,Snowshoe,Hare - Snowshoe,1,Usher 2000,
+Muskrat,,Muskrat,0.7,Usher 2000,
+Beaver,,Beaver,13.5,Usher 2000,
+Goose,Snow,Goose - Snow,1.7,Usher 2000,
+Goose,White-fronted,Goose - Greater White,1.7,Usher 2000,
+Goose,Canada,Goose - Canada,1.05,Usher 2000,Usher assumes B.c.hutchinsii (Cackling goose) thus smaller than other Canada geese
+Goose,Ross,Goose - Ross,0.92,New,"Average weight on allaboutobirds.org multiplied by Usher's conversion, corresponds well to roughly half of a snow goose and slightly more than Mallard"
+Brant,,Brant,1,Usher 2000,
+Swan,Tundra,Swan - Tundra,4.75,Usher 2000,
+Swan,Trumpeter,Swan - Trumpeter,7.14,New,Average weight on allaboutobirds.org multiplied by Usher's conversion
+Eider,King,Eider - King,1.3,Usher 2000,
+Eider,Common,Eider - Common,1.75,Usher 2000,
+Oldsquaw,,Oldsquaw,0.6,Usher 2000,
+Mallard,,Mallard,0.85,Usher 2000,
+Scoter,White-winged,Scoter - White-winged,1,Usher 2000,
+Scoter,Surf,Scoter - Surf,0.65,Usher 2000,
+Scoter,Black,Scoter - Black,0.69,New,Roughly same size as Surf Scoter
+Pintail,,Pintail,0.65,Usher 2000,
+Wigeon,American,Wigeon - American,0.55,Usher 2000,
+Canvasback,,Canvasback,0.86,New,"Average weight on allaboutobirds.org multiplied by Usher's conversion, is indeed very similar to Mallard"
+Merganser,Common,Merganser - Common,1.07,New,Average weight on allaboutobirds.org multiplied by Usher's conversion
+Teal,,Teal,0.22,New,Average weight on allaboutobirds.org multiplied by Usher's conversion
+Ducks - unknown,,Duck - Unknown,0.67,New,Median of non-eider ducks
+Loon,Common,Loon - Common,1.1,JBNQNHRC 1982,
+Crane,Sandhill,Crane - Sandhill,2.9,New,Average weight on allaboutobirds.org multiplied by Usher's conversion
+Ptarmigan,Willow,Ptarmigan - Willow,0.5,Usher 2000,
+Ptarmigan,Rock,Ptarmigan - Rock,0.35,Usher 2000,
+Ptarmigan,,Ptarmigan,0.4,Usher 2000,Assume 1:1 willow/rock
+Char,Ulukhaktok,Char - Ulukhaktok,1.55,Usher 2000,
+Char,Paulatuk,Char - Paulatuk,1.6,Usher 2000,
+Char,Aklavik,Char - Aklavik,0.65,Usher 2000,
+Char,Sachs Harbour,Char - Sachs Harbour,0.7,Usher 2000,
+Char,Land-locked,Char - Land Locked,0.65,New,"Use Usher's Aklavik value; which is presumably Dolly Varden, based on comments on size of char in Brown et al. 2016"
+Trout,Lake,Trout - Lake,1.3,Usher 2000,
+Whitefish,Broad,Whitefish - Broad,1.65,Usher 2000,
+Whitefish,Lake,Whitefish - Lake,1.25,Usher 2000,
+Inconnu,,Inconnu,2.55,Usher 2000,Low estimate
+Cisco,Arctic,Cisco - Arctic,0.32,Brown et al. 2016,
+Cisco,Least,Cisco - Least,0.32,Brown et al. 2016,
+Pike,Northern,Pike - Northern,2.2,Usher 2000,
+Herring,Pacific,Herring - Pacific,0.08,Brown et al. 2016,
+Burbot,,Burbot,1.91,Brown et al. 2016,
+Cod,Arctic,Cod - Arctic,0.05,Brown et al. 2016,
+Cod,Saffron,Cod - Saffron,0.09,Brown et al. 2016,
+Cod,Greenland,Cod - Greenland,0.49,New,"For length of 40 cm based on photos from P. Collings, estimated on fishbase.org"
+Flounders,,Flounder,0.5,Brown et al. 2016,
+Sculpin,Fourhorn,Sculpin - Fourhorn,0.09,New,"For common length of 30cm, estimated on fishbase.org; assume edible portion only 0.25"
+Salmon,,Salmon,1.68,New,"For a 50cmsalmon; L-W data from tshawytscha, nerka, ksutch, gorbuscha and keta; estimated on fishbase.org"
+Smelt,,Smelt,0.06,New,"For average length in studies of 23 cm, estimated on fishbase.org"
+Grayling,Arctic,Grayling - Arctic,0.9,Gamble 1984,
