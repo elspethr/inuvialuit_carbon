@@ -279,25 +279,67 @@ cols <- (viridis(4))[c(2,3,4,1)]
 
 pdf("Figure2.pdf", height=3.5, width=6, pointsize=9)
 par(mfrow=(c(3,1)), mar=c(3,4,3,1))
-plot(density(samps$harvest_est[,7,1])$x, density(samps$harvest_est[,7,1])$y/max(density(samps$harvest_est[,7,1])$y), ylab="Density", type="l",
+plot(density(samps$harvest_est[,7,1]/1000), ylab="Density", type="l",
      main="(a) Edible weight (kg)", xlab="", ylim=c(0,1.2), 
-     xlim=c(0, 135000), col=cols[1])
+     xlim=c(0, 135), col=cols[1])
 for (i in 1:4) {
-  polygon(density(samps$harvest_est[,7,i])$x, density(samps$harvest_est[,7,i])$y/max(density(samps$harvest_est[,7,i])$y), col = alpha(cols[i], 0.4), border=cols[i])
+  dens <- density(samps$harvest_est[,7,i]/1000)
+  polygon(dens$x, dens$y, col = alpha(cols[i], 0.4), border=cols[i])
 }
 plot(density(samps$market_cost_est[,7,1]/1000000), ylab="Density", 
-     main="(b) Replacement value (million $)", xlab="", ylim=c(0,65), 
-     xlim=c(0, 3.5), col=cols[1])
+     main="(b) Replacement value (million $)", xlab="", ylim=c(0,80), 
+     xlim=c(0, 3.6), col=cols[1])
 for (i in 1:4) {
-  polygon(density(samps$market_cost_[,7,i]/1000000), col = alpha(cols[i], 0.4), border=cols[i])
+  dens <- density(samps$market_cost_[,7,i]/1000000)
+  polygon(dens$x, dens$y, col = alpha(cols[i], 0.4), border=cols[i])
 }
 plot(density(samps$carbon_cost_est[,7,1,1]/1000), ylab="Density", 
      main=expression(bold(paste("(b) ", CO[2], " emitted by replacements (tonnes)"))), 
-     xlab="", ylim=c(0,0.4), 
+     xlab="", ylim=c(0,0.45), 
      xlim=c(0, 1200), col=cols[1])
 for (i in 1:4) {
   for (j in 1:4) {
-    polygon(density(samps$carbon_cost_[,7,i,j]/1000), col = alpha(cols[i], j^1.5/10), border=cols[i])
+    dens <- density(samps$carbon_cost_[,7,i,j]/1000)
+    polygon(dens$x, dens$y, col = alpha(cols[i], j^1.5/10), border=cols[i])
+  }
+}
+dev.off()
+
+pdf("Figure2_transposed.pdf", height=5, width=6, pointsize=8)
+par(mfrow=(c(1,3)), mar=c(4,3,3,1))
+localmax <- max(density(samps$harvest_est[,7,1]/1000)$y)
+plot(density(samps$harvest_est[,7,1]/1000)$y/localmax, 
+     density(samps$harvest_est[,7,1]/1000)$x, xlab="", type="l",
+     main="(a) Edible weight (tonnes)", ylab="tonnes", xlim=c(0,1.05), 
+     ylim=c(0, 135), col=cols[1])
+for (i in 1:4) {
+  dens <- density(samps$harvest_est[,7,i]/1000)
+  polygon(dens$y/localmax, dens$x, col = alpha(cols[i], 0.4), border="black", lwd=0.25)
+  abline(h=mean(samps$harvest_est[,7,i])/1000, col=cols[i])
+  #abline(h=dens$x, col=alpha(cols[i], dens$y/10))
+}
+localmax <- max(density(samps$market_cost_est[,7,1]/1000000)$y)
+plot(density(samps$market_cost_est[,7,1]/1000000)$y/localmax, 
+     density(samps$market_cost_est[,7,1]/1000000)$x, xlab="Density", type="l",
+     main="(b) Replacement value (million $)", ylab="", xlim=c(0,1.05), 
+     ylim=c(0, 3.6), col=cols[1])
+for (i in 1:4) {
+  dens <- density(samps$market_cost_est[,7,i]/1000000)
+  polygon(dens$y/localmax, dens$x, col = alpha(cols[i], 0.4), , border="black", lwd=0.25)
+  abline(h=mean(samps$market_cost_est[,7,i])/1000000, col=cols[i])
+}
+localmax <- max(density(samps$carbon_cost_est[,7,1,1]/1000)$y)
+plot(density(samps$carbon_cost_est[,7,1,1]/1000)$y/localmax, 
+     density(samps$carbon_cost_est[,7,1,1]/1000)$x, xlab="", type="l",
+     main=expression(bold(paste("(c) ", CO[2], " emitted by replacements (tonnes)"))), 
+     ylab="", xlim=c(0,1.05), 
+     ylim=c(0, 1200), col=cols[1])
+for (i in 1:4) {
+  for (j in 1:4) {
+    localmax <- max(density(samps$carbon_cost_est[,7,1,1]/1000)$y)
+    dens <- density(samps$carbon_cost_[,7,i,j]/1000)
+    polygon(dens$y*i/localmax, dens$x, col = alpha(cols[i], j^1.5/10), border="black", lwd=0.25)
+    abline(h=mean(samps$carbon_cost_est[,7,i,j])/1000, col=cols[i])
   }
 }
 dev.off()
