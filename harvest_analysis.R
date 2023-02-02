@@ -5,6 +5,7 @@
 
 ### Get data ###
 
+setwd("../..")
 setwd("~/Dropbox/Carbon_estimation/Analysis/")
 
 villages <- c("Aklavik", "Inuvik", "Paulatuk", "Sachs Harbour", 
@@ -159,7 +160,7 @@ fish <- whitefish*.7 + salmonid*.3
 
 foods <- data.frame(rep(chicken,6), rep(fish,6), rep(beefpork,6))
 
-market_emissions <- array(data=NA, dim=c(6,3,4))
+market_emissions <- array(data=NA, dim=c(6,4,3))
 market_emissions[,1,] <- as.matrix(barge_emissions[,2]+foods)
 market_emissions[,2,] <- as.matrix(barge_emissions[,3]+foods)
 market_emissions[,3,] <- as.matrix(FM_emissions[,2]+foods)
@@ -223,18 +224,25 @@ dat3 <- list(EW = d$ADJ_HARV[idx],
              fuel_cost = 1.76,
              fuel_emissions = rail_emissions_litre[,2:3])
 
-setwd("../Article")
+setwd("../../../repos/inuvialuit_carbon")
 
 harvm3 <- stan(file = "carbon_model.stan", data = dat3, 
                control=list(adapt_delta=0.99, max_treedepth=20), 
-               iter=4000, chains=3, seed=4492)
+               iter=1000, chains=1, seed=4492)
 # sometimes a MCMC proposal is rejected; 
 # but they are accepted often enough
 
-setwd("../Analysis")
-
+#save samps for working without rerunning model
 samps <- extract.samples(harvm3)
 str(samps)
+write.csv(samps, "posterior_samples.csv")
+
+#small version for testing 
+small_samps <- extract.samples(harvm_small, n=100)
+write.csv(small_samps, "posterior_samples_100.csv")
+
+#read in samps if not loaded
+#samps <- read.csv(...)
 
 plot(samps$EW_est[,1], type="l") #plot a few to check mixing
 plot(samps$EW_est[,1697], type="l") 
@@ -263,39 +271,30 @@ groupnames <- c("Birds", "Fish", "Mammals", "Total")
 
 ## Main text ##
 
-# Figure 2a (summary of weight, cost, carbon)
+# Figure 2
 
-#density of samps for birds, fish, mammals, total for kg, $ and Co2
-library(reshape2)
-library(ggplot2)
-library(ggridges)
 library(viridis)
 library(scales)
-
-harvest_est_gg <- t(as.data.frame(samps$harvest_est[,7,]))
-harvest_est_gg <-cbind.data.frame(harvest_est_gg, group=groupnames)
-harvest_est_gg <- melt(harvest_est_gg , id.vars=c("group"))
-
 cols <- (viridis(4))[c(2,3,4,1)]
 
 pdf("Figure2.pdf", height=3.5, width=6, pointsize=9)
 par(mfrow=(c(3,1)), mar=c(3,4,3,1))
-plot(density(samps$harvest_est[,7,1]/1000), ylab="Density", 
-     main="(a) Edible weight (tonnes)", xlab="", ylim=c(0,1.2), 
-     xlim=c(0, 135), col=cols[1])
+plot(density(samps$harvest_est[,7,1])$x, density(samps$harvest_est[,7,1])$y/max(density(samps$harvest_est[,7,1])$y), ylab="Density", type="l",
+     main="(a) Edible weight (kg)", xlab="", ylim=c(0,1.2), 
+     xlim=c(0, 135000), col=cols[1])
 for (i in 1:4) {
-  polygon(density(samps$harvest_est[,7,i]/1000), col = alpha(cols[i], 0.4), border=cols[i])
+  polygon(density(samps$harvest_est[,7,i])$x, density(samps$harvest_est[,7,i])$y/max(density(samps$harvest_est[,7,i])$y), col = alpha(cols[i], 0.4), border=cols[i])
 }
 plot(density(samps$market_cost_est[,7,1]/1000000), ylab="Density", 
-     main="(b) Replacement value (million $)", xlab="", ylim=c(0,50), 
-     xlim=c(.35, 3.2), col=cols[1])
+     main="(b) Replacement value (million $)", xlab="", ylim=c(0,65), 
+     xlim=c(0, 3.5), col=cols[1])
 for (i in 1:4) {
   polygon(density(samps$market_cost_[,7,i]/1000000), col = alpha(cols[i], 0.4), border=cols[i])
 }
 plot(density(samps$carbon_cost_est[,7,1,1]/1000), ylab="Density", 
      main=expression(bold(paste("(b) ", CO[2], " emitted by replacements (tonnes)"))), 
-     xlab="", ylim=c(0,0.2), 
-     xlim=c(50, 700), col=cols[1])
+     xlab="", ylim=c(0,0.4), 
+     xlim=c(0, 1200), col=cols[1])
 for (i in 1:4) {
   for (j in 1:4) {
     polygon(density(samps$carbon_cost_[,7,i,j]/1000), col = alpha(cols[i], j^1.5/10), border=cols[i])
