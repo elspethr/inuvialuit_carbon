@@ -105,6 +105,7 @@ generated quantities{
       }
       fuel_est[i] = exp(normal_rng(a + b*log(EW_est[i]), phi[1]));
       harvest_est[7,4] += EW_est[i];
+      fuel_obs_est[7] += fuel_est[i];
       for (x in 1:6) {
         if (community[i] == x) {
             fuel_obs_est[x] += fuel_est[i];
@@ -143,6 +144,7 @@ generated quantities{
     }
   }
   nzero[7] = sum(nzero[1:6]);
+  fuel_zero_est[7] = sum(fuel_zero_est[1:6]);
   fuel_total[7] = sum(fuel_total[1:6]);
   fuel_total_cost[7] = sum(fuel_total_cost[1:6]);
   fuel_total_emissions[7,1] = sum(fuel_total_emissions[1:6,1]);

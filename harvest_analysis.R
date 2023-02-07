@@ -5,7 +5,6 @@
 
 ### Get data ###
 
-setwd("../..")
 setwd("~/Dropbox/Carbon_estimation/Analysis/")
 
 villages <- c("Aklavik", "Inuvik", "Paulatuk", "Sachs Harbour", 
@@ -228,17 +227,16 @@ setwd("../../../repos/inuvialuit_carbon")
 
 harvm3 <- stan(file = "carbon_model.stan", data = dat3, 
                control=list(adapt_delta=0.99, max_treedepth=20), 
-               iter=1000, chains=1, seed=4492)
+               iter=4000, chains=3, seed=4492)
 # sometimes a MCMC proposal is rejected; 
 # but they are accepted often enough
 
 #save samps for working without rerunning model
 samps <- extract.samples(harvm3)
 str(samps)
-write.csv(samps, "posterior_samples.csv")
 
 #small version for testing 
-small_samps <- extract.samples(harvm_small, n=100)
+small_samps <- extract.samples(harvm3, n=100)
 write.csv(small_samps, "posterior_samples_100.csv")
 
 #read in samps if not loaded
@@ -305,6 +303,7 @@ for (i in 1:4) {
 }
 dev.off()
 
+#Thought here --- just change to lines from samples drawn from posterior??
 pdf("Figure2_transposed.pdf", height=5, width=6, pointsize=8)
 par(mfrow=(c(1,3)), mar=c(4,3,3,1))
 localmax <- max(density(samps$harvest_est[,7,1]/1000)$y)
@@ -350,6 +349,7 @@ Table1 <- cbind.data.frame(type=groupnames,
                 mean=apply(samps$harvest_est[,7,], 2, mean),
                 sd=apply(samps$harvest_est[,7,], 2, sd),
                 lo=HPDI_temp[1,], hi=HPDI_temp[2,])
+Table1
 
 # total harvest with error
 Table1[4,]
@@ -381,9 +381,13 @@ Table2 <- cbind.data.frame(type=groupnames,
                            mean=apply(samps$market_cost_est[,7,], 2, mean),
                            sd=apply(samps$market_cost_est[,7,], 2, sd),
                            lo=HPDI_temp[1,], hi=HPDI_temp[2,])
+Table2
 
 # total cost
 Table2[4,2]
+
+# total cost per kg 
+Table2$mean/Table1$mean
 
 # total cost per beneficiary
 Table2[4,2]/2767
@@ -393,59 +397,84 @@ comCADtotal <- apply(samps$market_cost_est[,,4], 2, mean)
 comCADtotal/c(bene2021, 2767)
 
 # Table 3 (carbon emissions)
-HPDI_temp <- apply(samps$carbon_cost_est[,7,,4], 3, HPDI, 0.90)
-Table2 <- cbind.data.frame(type=groupnames,
-                           mean=apply(samps$market_cost_est[,7,], 2, mean),
-                           sd=apply(samps$market_cost_est[,7,], 2, sd),
-                           lo=HPDI_temp[1,], hi=HPDI_temp[2,])
-
-apply(samps$market_cost_est[,7,], 2, mean
+Table3 <- data.frame(type=groupnames)
+for (i in 1:4) {
+  HPDI_temp <- apply(samps$carbon_cost_est[,7,,i], 2, HPDI, 0.90)
+  Table3 <- cbind.data.frame(Table3,
+                           lo=HPDI_temp[1,], 
+                           mean=apply(samps$carbon_cost_est[,7,,i], 2, mean),
+                           hi=HPDI_temp[2,])
+}
+Table3
 
 # total emissions 
+Table3[4,c(2, 13)] #lo-high ranges of HDPIs (???)
+Table3[4,c(3, 6, 9, 12)] #scenario means
 
 # emissions per kg food
+Table3[4,c(3, 6, 9, 12)]/Table1[4,2]
 
 # emissions per beneficiary
+Table3[4,c(3, 6, 9, 12)]/2767
 
 # slope of fuel regression
+mean(samps$b)
+sd(samps$b)
 
 # prob failed trip
+mean(samps$theta)
+sd(samps$theta)
 
 # input gasoline (l)
+input <- apply(samps$fuel_obs_est, 2, mean)
+input
 
 # n failed trips
+apply(samps$nzero, 2, mean)
 
 # additional gas (l)
+apply(samps$fuel_zero_est, 2, mean)
 
-# gas litres per trip 
+#total gas (l)
+totallitres <- apply(samps$fuel_total, 2, mean)
 
 # total input gasoline ($)
+totalgascost <- apply(samps$fuel_total_cost, 2, mean)
 
 # total input gasoline (CO2)
+lo_gas_emissions <- apply(samps$fuel_total_emissions[,,1], 2, mean) #lo barge
+high_gas_emissions <- apply(samps$fuel_total_emissions[,,2], 2, mean) #high barge
 
 # litres, $ and Co2 per kilo harvested
+cbind.data.frame(Settlement=c(villages, "Total"), 
+                   litres = totallitres/comkgtotal,
+                   cost=totalgascost/comkgtotal,
+                   lo=lo_gas_emissions/comkgtotal,
+                   hi=high_gas_emissions/comkgtotal)
+# I think in Tuk they are more efficient because they get these big catches of fish 
+# Points to a weakness in our method
 
 # kg carbon per person
-
+lo_gas_emissions/c(bene2021, 2767)
+high_gas_emissions/c(bene2021, 2767)
 
 ## SI ##
 
-# per capita harvest Paulatuk
+# per capita harvest in diff villages
+cbind(villages, comkgtotal[1:6]/bene2021)
+(comkgtotal[1:6]/bene2021)[3]/0.6 #adjusted for sampling?
 
-# per capita harvest Ulukhaktok
-
-# additional subsidy for amount harvest
+# additional subsidy for amount harvestes
 # Aklavik, Paulatuk, Sachs Harbour, and Ulukhaktok in 2020 were $5.75, $4.95, $7.25, $5.65 
+extrasubsidy <- comkgtotal[1:6]*c(5.75, 0, 4.95, 7.25, 0, 5.65)
+comCADtotal+c(extrasubsidy, sum(extrasubsidy))
+
 
 # Table S7
-#a
+pars <- c("Theta (prob. failed trip)", "Fuel intercept - successful", "Fuel slope - successful", "Standard deviation, linear estimator", "Fuel intercept - failed trip", "Fuel sd - failed trip")
+mean <- c(mean(samps$theta), mean(samps$a), mean(samps$b), 
+          mean(samps$phi[,1]), mean(samps$a2), mean(samps$phi[,2]))
+sds <- c(sd(samps$theta), sd(samps$a), sd(samps$b), 
+          sd(samps$phi[,1]), sd(samps$a2), sd(samps$phi[,2]))
 
-#b
-
-#a2
-
-# phi1
-
-# phi2
-
-#theta
+TableS7 <- cbind.data.frame(Parameter=pars, Mean=mean, SD=sds)
