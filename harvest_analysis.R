@@ -273,7 +273,13 @@ groupnames <- c("Birds", "Fish", "Mammals", "Total")
 
 library(viridis)
 library(scales)
+library(rphylopic)
+
 cols <- (viridis(4))[c(2,3,4,1)]
+
+caribou <- image_data("e6e864fd-8e3d-435f-9db3-dc6869c589f1", size = "thumb")[[1]]
+char <- image_data("68304786-f291-4115-9ccd-ead068ba6f19", size = "thumb")[[1]]
+goose <- image_data("7b8fb3d4-0cac-4552-8cd1-bd493b7de679", size="thumb")[[1]]
 
 pdf("Figure2.pdf", height=3.5, width=6, pointsize=9)
 par(mfrow=(c(3,1)), mar=c(3,4,3,1))
@@ -303,44 +309,57 @@ for (i in 1:4) {
 }
 dev.off()
 
-#Thought here --- just change to lines from samples drawn from posterior??
-pdf("Figure2_transposed.pdf", height=5, width=6, pointsize=8)
-par(mfrow=(c(1,3)), mar=c(4,3,3,1))
-localmax <- max(density(samps$harvest_est[,7,1]/1000)$y)
-plot(density(samps$harvest_est[,7,1]/1000)$y/localmax, 
-     density(samps$harvest_est[,7,1]/1000)$x, xlab="", type="l",
-     main="(a) Edible weight (tonnes)", ylab="tonnes", xlim=c(0,1.05), 
-     ylim=c(0, 135), col=cols[1])
+# lines from samples drawn from posterior??
+pdf("Figure2_lines.pdf", height=4, width=5, pointsize=8)
+par(mar=c(1,4,3,1), cex.main=0.9)
+nf <- layout(matrix(c(1,2,3,4), ncol=4, byrow=TRUE), 
+  widths=c(2,2,2,1))
+plot(density(samps$harvest_est[,7,1]/1000)$y, 
+     density(samps$harvest_est[,7,1]/1000)$x, xlab="", type="n", xaxt="n",
+     main="(a) Edible weight", ylab="Tonnes", xlim=c(0,1), 
+     ylim=c(0, 135))
 for (i in 1:4) {
-  dens <- density(samps$harvest_est[,7,i]/1000)
-  polygon(dens$y/localmax, dens$x, col = alpha(cols[i], 0.4), border="black", lwd=0.25)
-  abline(h=mean(samps$harvest_est[,7,i])/1000, col=cols[i])
-  #abline(h=dens$x, col=alpha(cols[i], dens$y/10))
-}
-localmax <- max(density(samps$market_cost_est[,7,1]/1000000)$y)
+    pullasamp <- sample(1:6000, 1500)
+    abline(h=samps$harvest_est[pullasamp,7,i]/1000, col=alpha(cols[i], 0.07))}
+box()
 plot(density(samps$market_cost_est[,7,1]/1000000)$y/localmax, 
-     density(samps$market_cost_est[,7,1]/1000000)$x, xlab="Density", type="l",
-     main="(b) Replacement value (million $)", ylab="", xlim=c(0,1.05), 
-     ylim=c(0, 3.6), col=cols[1])
+     density(samps$market_cost_est[,7,1]/1000000)$x, xlab="", type="n", xaxt="n",
+     main="(b) Replacement value", ylab="Million $", xlim=c(0,100), 
+     ylim=c(0, 3.6))
 for (i in 1:4) {
-  dens <- density(samps$market_cost_est[,7,i]/1000000)
-  polygon(dens$y/localmax, dens$x, col = alpha(cols[i], 0.4), , border="black", lwd=0.25)
-  abline(h=mean(samps$market_cost_est[,7,i])/1000000, col=cols[i])
+  pullasamp <- sample(1:6000, 1500)
+  abline(h=samps$market_cost_est[pullasamp,7,i]/1000000, col=alpha(cols[i], 0.07))
 }
-localmax <- max(density(samps$carbon_cost_est[,7,1,1]/1000)$y)
-plot(density(samps$carbon_cost_est[,7,1,1]/1000)$y/localmax, 
-     density(samps$carbon_cost_est[,7,1,1]/1000)$x, xlab="", type="l",
-     main=expression(bold(paste("(c) ", CO[2], " emitted by replacements (tonnes)"))), 
-     ylab="", xlim=c(0,1.05), 
-     ylim=c(0, 1200), col=cols[1])
+box()
+plot(density(samps$carbon_cost_est[,7,1,1]/1000)$y, 
+     density(samps$carbon_cost_est[,7,1,1]/1000)$x, xlab="", type="n",  xaxt="n",
+     main=expression(bold(paste("(c) ", CO[2], " emitted by replacements"))), 
+     ylab="Tonnes", xlim=c(0,1000), ylim=c(0, 1200))
 for (i in 1:4) {
   for (j in 1:4) {
-    localmax <- max(density(samps$carbon_cost_est[,7,1,1]/1000)$y)
-    dens <- density(samps$carbon_cost_[,7,i,j]/1000)
-    polygon(dens$y*i/localmax, dens$x, col = alpha(cols[i], j^1.5/10), border="black", lwd=0.25)
-    abline(h=mean(samps$carbon_cost_est[,7,i,j])/1000, col=cols[i])
+    pullasamp <- sample(1:6000, 1500)
+    abline(h=samps$carbon_cost_est[pullasamp,7,i,j]/1000, col=alpha(cols[i], 0.07))
   }
 }
+box()
+par(mar=c(1,0,3,0))
+plot(1:1000/6, 1:1000, type="n", axes=FALSE, ylab="", xlab="")
+add_phylopic_base(goose, x=23, y = 50, ysize=64,
+                  alpha = 1, col = cols[1])
+text(75, 50, "Birds", adj=0)
+add_phylopic_base(char, x=23, y = 120, ysize=64,
+                  alpha = 1, col = cols[2])
+text(75, 120, "Fish", adj=0)
+add_phylopic_base(caribou, x=30, y = 200, ysize=76,
+                  alpha = 1, col = cols[3])
+text(75, 200, "Mammals", adj=0)
+add_phylopic_base(goose, x=45, y = 275, ysize=38,
+                  alpha = 1, col = cols[4])
+add_phylopic_base(caribou, x=20, y = 300, ysize=42,
+                  alpha = 1, col = cols[4])
+add_phylopic_base(char, x=10, y = 260, ysize=34,
+                  alpha = 1, col = cols[4])
+text(75, 275, "Total", adj=0)
 dev.off()
 
 # Table 1 (edible weight)
