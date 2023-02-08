@@ -6,6 +6,7 @@
 ### Get data ###
 
 setwd("~/Dropbox/Carbon_estimation/Analysis/")
+#options(warnPartialMatchDollar=TRUE)
 
 villages <- c("Aklavik", "Inuvik", "Paulatuk", "Sachs Harbour", 
               "Tuktoyaktuk", "Ulukhaktok")
@@ -322,7 +323,7 @@ for (i in 1:4) {
     pullasamp <- sample(1:6000, 1500)
     abline(h=samps$harvest_est[pullasamp,7,i]/1000, col=alpha(cols[i], 0.05))}
 box()
-plot(density(samps$market_cost_est[,7,1]/1000000)$y/localmax, 
+plot(density(samps$market_cost_est[,7,1]/1000000)$y, 
      density(samps$market_cost_est[,7,1]/1000000)$x, xlab="", type="n", xaxt="n",
      main="(b) Replacement value", ylab="Million $", xlim=c(0,100), 
      ylim=c(0, 3.6))
