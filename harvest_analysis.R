@@ -320,7 +320,7 @@ plot(density(samps$harvest_est[,7,1]/1000)$y,
      ylim=c(0, 135))
 for (i in 1:4) {
     pullasamp <- sample(1:6000, 1500)
-    abline(h=samps$harvest_est[pullasamp,7,i]/1000, col=alpha(cols[i], 0.07))}
+    abline(h=samps$harvest_est[pullasamp,7,i]/1000, col=alpha(cols[i], 0.05))}
 box()
 plot(density(samps$market_cost_est[,7,1]/1000000)$y/localmax, 
      density(samps$market_cost_est[,7,1]/1000000)$x, xlab="", type="n", xaxt="n",
@@ -328,7 +328,7 @@ plot(density(samps$market_cost_est[,7,1]/1000000)$y/localmax,
      ylim=c(0, 3.6))
 for (i in 1:4) {
   pullasamp <- sample(1:6000, 1500)
-  abline(h=samps$market_cost_est[pullasamp,7,i]/1000000, col=alpha(cols[i], 0.07))
+  abline(h=samps$market_cost_est[pullasamp,7,i]/1000000, col=alpha(cols[i], 0.05))
 }
 box()
 plot(density(samps$carbon_cost_est[,7,1,1]/1000)$y, 
@@ -338,7 +338,7 @@ plot(density(samps$carbon_cost_est[,7,1,1]/1000)$y,
 for (i in 1:4) {
   for (j in 1:4) {
     pullasamp <- sample(1:6000, 1500)
-    abline(h=samps$carbon_cost_est[pullasamp,7,i,j]/1000, col=alpha(cols[i], 0.07))
+    abline(h=samps$carbon_cost_est[pullasamp,7,i,j]/1000, col=alpha(cols[i], 0.05))
   }
 }
 box()
@@ -355,7 +355,7 @@ add_phylopic_base(caribou, x=30, y = 200, ysize=76,
 text(75, 200, "Mammals", adj=0)
 add_phylopic_base(goose, x=45, y = 275, ysize=38,
                   alpha = 1, col = cols[4])
-add_phylopic_base(caribou, x=20, y = 300, ysize=42,
+add_phylopic_base(caribou, x=15, y = 300, ysize=42,
                   alpha = 1, col = cols[4])
 add_phylopic_base(char, x=10, y = 260, ysize=34,
                   alpha = 1, col = cols[4])
