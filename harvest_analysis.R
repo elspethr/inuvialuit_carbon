@@ -277,12 +277,13 @@ library(scales)
 library(rphylopic)
 
 cols <- (viridis(4))[c(2,3,4,1)]
+cols[3] <- "chocolate4"
 
 caribou <- image_data("e6e864fd-8e3d-435f-9db3-dc6869c589f1", size = "thumb")[[1]]
 char <- image_data("68304786-f291-4115-9ccd-ead068ba6f19", size = "thumb")[[1]]
 goose <- image_data("7b8fb3d4-0cac-4552-8cd1-bd493b7de679", size="thumb")[[1]]
 
-pdf("Figure2.pdf", height=3.5, width=6, pointsize=9)
+pdf("Figure2_distributions.pdf", height=3.5, width=6, pointsize=9)
 par(mfrow=(c(3,1)), mar=c(3,4,3,1))
 plot(density(samps$harvest_est[,7,1]/1000), ylab="Density", type="l",
      main="(a) Edible weight (kg)", xlab="", ylim=c(0,1.2), 
@@ -311,40 +312,53 @@ for (i in 1:4) {
 dev.off()
 
 # lines from samples drawn from posterior??
-pdf("Figure2_lines.pdf", height=4, width=5, pointsize=8)
+png("Figure2.png", height=4, width=6, 
+    units="in", res=480, pointsize=8)
 par(mar=c(1,4,3,1), cex.main=0.9)
-nf <- layout(matrix(c(1,2,3,4), ncol=4, byrow=TRUE), 
-  widths=c(2,2,2,1))
+layout(matrix(c(1,2,3,4), ncol=4, byrow=TRUE), 
+  widths=c(1.75,1.75,3,1))
+nsamps <- 500
+alp <- 0.05
+pullasamp <- sample(1:6000, nsamps) 
 plot(density(samps$harvest_est[,7,1]/1000)$y, 
      density(samps$harvest_est[,7,1]/1000)$x, xlab="", type="n", xaxt="n",
      main="(a) Edible weight", ylab="Tonnes", xlim=c(0,1), 
-     ylim=c(0, 135))
+     ylim=c(5, 140))
 for (i in 1:4) {
-    pullasamp <- sample(1:6000, 1500)
-    abline(h=samps$harvest_est[pullasamp,7,i]/1000, col=alpha(cols[i], 0.05))}
+    abline(h=samps$harvest_est[pullasamp,7,i]/1000, 
+           col=alpha(cols[i], alp), lwd=2)
+}
 box()
 plot(density(samps$market_cost_est[,7,1]/1000000)$y, 
      density(samps$market_cost_est[,7,1]/1000000)$x, xlab="", type="n", xaxt="n",
      main="(b) Replacement value", ylab="Million $", xlim=c(0,100), 
-     ylim=c(0, 3.6))
+     ylim=c(0.1, 3.4))
 for (i in 1:4) {
-  pullasamp <- sample(1:6000, 1500)
-  abline(h=samps$market_cost_est[pullasamp,7,i]/1000000, col=alpha(cols[i], 0.05))
+  abline(h=samps$market_cost_est[pullasamp,7,i]/1000000, 
+         col=alpha(cols[i], alp))
 }
 box()
 plot(density(samps$carbon_cost_est[,7,1,1]/1000)$y, 
-     density(samps$carbon_cost_est[,7,1,1]/1000)$x, xlab="", type="n",  xaxt="n",
+     density(samps$carbon_cost_est[,7,1,1]/1000)$x, xlab="", 
+     type="n",  xaxt="n",
      main=expression(bold(paste("(c) ", CO[2], " emitted by replacements"))), 
-     ylab="Tonnes", xlim=c(0,1000), ylim=c(0, 1200))
+     ylab="Tonnes", xlim=c(0.15,3.85), ylim=c(20, 1200))
 for (i in 1:4) {
-  for (j in 1:4) {
-    pullasamp <- sample(1:6000, 1500)
-    abline(h=samps$carbon_cost_est[pullasamp,7,i,j]/1000, col=alpha(cols[i], 0.05))
+    for (j in 1:4) {
+      segments(x0=rep(j-1,nsamps), 
+               y0=samps$carbon_cost_est[pullasamp,7,i,j]/1000,
+               x1=rep(j-0.01, nsamps), 
+               y1=samps$carbon_cost_est[pullasamp,7,i,j]/1000, 
+               col=alpha(cols[i], alp))
   }
 }
+abline(v=1:3, lwd=1)
+text(x=c(0.5,1.5,2.5,3.5), y=c(0,0,0,0),
+    labels=c("Low Barge", "High Barge", "Low Food Mail", "High Food Mail"),
+    cex=0.9)
 box()
 par(mar=c(1,0,3,0))
-plot(1:1000/6, 1:1000, type="n", axes=FALSE, ylab="", xlab="")
+plot(1:1000/5, 1:1000, type="n", axes=FALSE, ylab="", xlab="")
 add_phylopic_base(goose, x=23, y = 50, ysize=64,
                   alpha = 1, col = cols[1])
 text(75, 50, "Birds", adj=0)
@@ -363,13 +377,14 @@ add_phylopic_base(char, x=10, y = 260, ysize=34,
 text(75, 275, "Total", adj=0)
 dev.off()
 
+
 # Table 1 (edible weight)
 HPDI_temp <- apply(samps$harvest_est[,7,], 2, HPDI, 0.90)
-Table1 <- cbind.data.frame(type=groupnames,
-                mean=apply(samps$harvest_est[,7,], 2, mean),
+Table1 <- cbind.data.frame(mean=apply(samps$harvest_est[,7,], 2, mean),
                 sd=apply(samps$harvest_est[,7,], 2, sd),
                 lo=HPDI_temp[1,], hi=HPDI_temp[2,])
-Table1
+rownames(Table1) <- groupnames
+write.table(round(Table1, 0), "table1.txt", sep="\t")
 
 # total harvest with error
 Table1[4,]
@@ -377,19 +392,23 @@ Table1[4,]
 # harvests for caribou, broad whitefish, muskox and inconnu
 caribouEW <- samps$EW_est[,which(harv_edible$ecotype=="Caribou")]
 sum(apply(caribouEW, 2, mean))
+sum(apply(caribouEW, 2, sd))
 muskoxEW <- samps$EW_est[,which(harv_edible$ecotype=="Muskox")]
 sum(apply(muskoxEW, 2, mean))
+sum(apply(muskoxEW, 2, sd))
 bwEW <- samps$EW_est[,which(harv_edible$SpeciesNam=="Whitefish - Broad")]
 sum(apply(bwEW, 2, mean))
+sum(apply(bwEW, 2, sd))
 inconnuEW <- samps$EW_est[,which(harv_edible$SpeciesNam=="Inconnu")]
 sum(apply(inconnuEW, 2, mean))
+sum(apply(inconnuEW, 2, sd))
 snowgooseEW <- samps$EW_est[,which(harv_edible$SpeciesNam=="Goose - Snow")]
 sum(apply(snowgooseEW, 2, mean))
 mooseEW <- samps$EW_est[,which(harv_edible$SpeciesNam=="Moose")]
 sum(apply(mooseEW, 2, mean))
 
 # harvest per beneficiary
-Table1[4,2]/2767
+Table1[4,1]/2767
 
 # harvest per beneficiary by community
 comkgtotal <- apply(samps$harvest_est[,,4], 2, mean)
@@ -397,20 +416,20 @@ comkgtotal/c(bene2021, 2767)
 
 # Table 2 (total cost)
 HPDI_temp <- apply(samps$market_cost_est[,7,], 2, HPDI, 0.90)
-Table2 <- cbind.data.frame(type=groupnames,
-                           mean=apply(samps$market_cost_est[,7,], 2, mean),
+Table2 <- cbind.data.frame(mean=apply(samps$market_cost_est[,7,], 2, mean),
                            sd=apply(samps$market_cost_est[,7,], 2, sd),
                            lo=HPDI_temp[1,], hi=HPDI_temp[2,])
-Table2
+rownames(Table2) <- groupnames
+write.table(round(Table2,0), "table2.txt", sep="\t", row.names=TRUE)
 
 # total cost
-Table2[4,2]
+Table2[4,1]
 
 # total cost per kg 
 Table2$mean/Table1$mean
 
 # total cost per beneficiary
-Table2[4,2]/2767
+Table2[4,1]/2767
 
 # total cost per beneficiary, by community
 comCADtotal <- apply(samps$market_cost_est[,,4], 2, mean)
@@ -421,21 +440,22 @@ Table3 <- data.frame(type=groupnames)
 for (i in 1:4) {
   HPDI_temp <- apply(samps$carbon_cost_est[,7,,i], 2, HPDI, 0.90)
   Table3 <- cbind.data.frame(Table3,
-                           lo=HPDI_temp[1,], 
-                           mean=apply(samps$carbon_cost_est[,7,,i], 2, mean),
-                           hi=HPDI_temp[2,])
+                           lo=round(HPDI_temp[1,]/1000, 0), 
+                           mean=round(apply(samps$carbon_cost_est[,7,,i], 
+                                            2, mean)/1000, 0),
+                           hi=round(HPDI_temp[2,]/1000, 0))
 }
-Table3
+write.table(Table3, "table3.txt", sep="\t", row.names=FALSE)
 
 # total emissions 
 Table3[4,c(2, 13)] #lo-high ranges of HDPIs (???)
 Table3[4,c(3, 6, 9, 12)] #scenario means
 
 # emissions per kg food
-Table3[4,c(3, 6, 9, 12)]/Table1[4,2]
+Table3[4,c(3, 6, 9, 12)]*1000/Table1[4,1]
 
 # emissions per beneficiary
-Table3[4,c(3, 6, 9, 12)]/2767
+Table3[4,c(3, 6, 9, 12)]*1000/2767
 
 # slope of fuel regression
 mean(samps$b)
@@ -448,22 +468,34 @@ sd(samps$theta)
 # input gasoline (l)
 input <- apply(samps$fuel_obs_est, 2, mean)
 input
+apply(samps$fuel_obs_est, 2, sd)
 
 # n failed trips
 apply(samps$nzero, 2, mean)
+apply(samps$nzero, 2, sd)
+
 
 # additional gas (l)
 apply(samps$fuel_zero_est, 2, mean)
+apply(samps$fuel_zero_est, 2, sd)
 
 #total gas (l)
 totallitres <- apply(samps$fuel_total, 2, mean)
+totallitres
+apply(samps$fuel_total, 2, sd)
 
 # total input gasoline ($)
 totalgascost <- apply(samps$fuel_total_cost, 2, mean)
+apply(samps$fuel_total_cost, 2, sd)
 
 # total input gasoline (CO2)
 lo_gas_emissions <- apply(samps$fuel_total_emissions[,,1], 2, mean) #lo barge
 high_gas_emissions <- apply(samps$fuel_total_emissions[,,2], 2, mean) #high barge
+apply(samps$fuel_total_emissions[,,1], 2, HPDI) #lo barge
+apply(samps$fuel_total_emissions[,,2], 2, HPDI)
+
+lo_gas_emissions/1000 
+high_gas_emissions/1000
 
 # litres, $ and Co2 per kilo harvested
 cbind.data.frame(Settlement=c(villages, "Total"), 
@@ -492,9 +524,10 @@ comCADtotal+c(extrasubsidy, sum(extrasubsidy))
 
 # Table S7
 pars <- c("Theta (prob. failed trip)", "Fuel intercept - successful", "Fuel slope - successful", "Standard deviation, linear estimator", "Fuel intercept - failed trip", "Fuel sd - failed trip")
-mean <- c(mean(samps$theta), mean(samps$a), mean(samps$b), 
-          mean(samps$phi[,1]), mean(samps$a2), mean(samps$phi[,2]))
-sds <- c(sd(samps$theta), sd(samps$a), sd(samps$b), 
-          sd(samps$phi[,1]), sd(samps$a2), sd(samps$phi[,2]))
+mean <- round(c(mean(samps$theta), mean(samps$a), mean(samps$b), 
+          mean(samps$phi[,1]), mean(samps$a2), mean(samps$phi[,2])), 3)
+sds <- round(c(sd(samps$theta), sd(samps$a), sd(samps$b), 
+          sd(samps$phi[,1]), sd(samps$a2), sd(samps$phi[,2])),3) 
 
 TableS7 <- cbind.data.frame(Parameter=pars, Mean=mean, SD=sds)
+write.table(TableS7, "tableS7.txt", sep="\t", row.names=FALSE)
