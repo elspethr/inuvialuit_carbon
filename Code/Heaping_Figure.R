@@ -1,0 +1,15 @@
+pdf("median_sd_lognormal.pdf", pointsize=10, width=8, height=5)
+curve(calc_sd(x, 0.4), xlab = "harvest size", ylab = "sd heaping error", 
+      from = 1, to = 500, main="Median and standard deviation in a log normal distribution")
+axis(2, at = seq(10, 50, 10), labels = rep("", length(seq(10, 50, 10))))
+axis(2, at = seq(50, 300, 50), labels = rep("", length(seq(50, 300, 50))))
+abline(h = seq(10, 50, 10), col = "gray", lty = 2, lwd=0.5)
+abline(h = seq(50, 250, 50), col = "gray", lty = 2, lwd=0.5)
+curve(calc_sd(x, 0.4), add = TRUE)
+curve(calc_sd(x, 0.3), add = TRUE)
+curve(calc_sd(x, 0.2), add = TRUE)
+curve(calc_sd(x, 0.1), add = TRUE)
+curve(calc_sd(x, 0.05), add = TRUE)
+text(rep(498, 5), c(16, 40, 95, 150, 215), cex=0.8,
+     labels=sapply(c(0.05, 0.1, 0.2, 0.3, 0.4), function(x) as.expression(substitute(sigma == B, list(B = as.name(x))))))
+dev.off()
