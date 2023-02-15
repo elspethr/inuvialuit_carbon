@@ -23,19 +23,17 @@ dat3 = list(EW = d$ADJ_HARV[idx],
              fuel_cost = 1.76,
              fuel_emissions = rail_emissions_litre[,2:3])
 
-Carbon_model = stan_model(file = "Code/Carbon_model.stan")
-
-harvm3 = sampling(Carbon_model, data = dat3, 
-              control=list(adapt_delta=0.99, max_treedepth=20), 
-              iter=4000, chains=3, seed=4492)
+harvm3 <- stan(file = "Code/Carbon_model.stan", data = dat3, 
+               control=list(adapt_delta=0.99, max_treedepth=20), 
+               iter=4000, chains=3, seed=4492)
 
 # Save samps for working without rerunning model
 samps = extract.samples(harvm3)
 str(samps)
 
 #small version for testing 
-small_samps = extract.samples(harvm3, n=100)
-write.csv(small_samps, "posterior_samples_100.csv")
+#small_samps = extract.samples(harvm3, n=100)
+#write.csv(small_samps, "posterior_samples_100.csv")
 
 #read in samps if not loaded
 #samps <- read.csv(...)

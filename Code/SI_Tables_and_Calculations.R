@@ -24,3 +24,58 @@ sds = round(c(sd(samps$theta), sd(samps$a), sd(samps$b),
 
 TableS7 = cbind.data.frame(Parameter=pars, Mean=mean, SD=sds)
 write.table(TableS7, "tableS7.txt", sep="\t", row.names=FALSE)
+
+# Additional tables with village breakdowns
+
+Birds_EW_lo <- apply(samps$harvest_est[,,1], 2, HPDI, 0.90)[1,]
+Birds_EW_mean <- apply(samps$harvest_est[,,1], 2, mean)
+Birds_EW_hi <- apply(samps$harvest_est[,,1], 2, HPDI, 0.90)[2,]
+Fish_EW_lo <- apply(samps$harvest_est[,,2], 2, HPDI, 0.90)[1,]
+Fish_EW_mean <- apply(samps$harvest_est[,,2], 2, mean)
+Fish_EW_hi <- apply(samps$harvest_est[,,2], 2, HPDI, 0.90)[2,]
+Mammals_EW_lo <- apply(samps$harvest_est[,,3], 2, HPDI, 0.90)[1,]
+Mammals_EW_mean <- apply(samps$harvest_est[,,3], 2, mean)
+Mammals_EW_hi <- apply(samps$harvest_est[,,3], 2, HPDI, 0.90)[2,]
+Total_EW_lo <- apply(samps$harvest_est[,,4], 2, HPDI, 0.90)[1,]
+Total_EW_mean <- apply(samps$harvest_est[,,4], 2, mean)
+Total_EW_high <- apply(samps$harvest_est[,,4], 2, HPDI, 0.90)[2,]
+
+write.table(cbind.data.frame(Birds_EW_lo, Birds_EW_mean, Birds_EW_hi, Fish_EW_lo, Fish_EW_mean, Fish_EW_hi, Mammals_EW_lo, Mammals_EW_mean, Mammals_EW_hi, Total_EW_lo, Total_EW_mean, Total_EW_high), "EW_by_village.txt", sep="\t", row.names=FALSE)
+
+Birds_cost_lo <- apply(samps$market_cost_est[,,1], 2, HPDI, 0.90)[1,]
+Birds_cost_mean <- apply(samps$market_cost_est[,,1], 2, mean)
+Birds_cost_hi <- apply(samps$market_cost_est[,,1], 2, HPDI, 0.90)[2,]
+Fish_cost_lo <- apply(samps$market_cost_est[,,2], 2, HPDI, 0.90)[1,]
+Fish_cost_mean <- apply(samps$market_cost_est[,,2], 2, mean)
+Fish_cost_hi <- apply(samps$market_cost_est[,,2], 2, HPDI, 0.90)[2,]
+Mammals_cost_lo <- apply(samps$market_cost_est[,,3], 2, HPDI, 0.90)[1,]
+Mammals_cost_mean <- apply(samps$market_cost_est[,,3], 2, mean)
+Mammals_cost_hi <- apply(samps$market_cost_est[,,3], 2, HPDI, 0.90)[2,]
+Total_cost_lo <- apply(samps$market_cost_est[,,4], 2, HPDI, 0.90)[1,]
+Total_cost_mean <- apply(samps$market_cost_est[,,4], 2, mean)
+Total_cost_high <- apply(samps$market_cost_est[,,4], 2, HPDI, 0.90)[2,]
+
+write.table(cbind.data.frame(Birds_cost_lo, Birds_cost_mean, Birds_cost_hi, Fish_cost_lo, Fish_cost_mean, Fish_cost_hi, Mammals_cost_lo, Mammals_cost_mean, Mammals_cost_hi, Total_cost_lo, Total_cost_mean, Total_cost_high), "cost_by_village.txt", sep="\t", row.names=FALSE)
+
+full_carbon_scenarios <- data.frame()
+for (i in 1:4) {
+  Birds_cost_lo <- apply(samps$carbon_cost_est[,,1,i], 2, HPDI, 0.90)[1,]/1000
+  Birds_cost_mean <- apply(samps$carbon_cost_est[,,1,i], 2, mean)/1000
+  Birds_cost_hi <- apply(samps$carbon_cost_est[,,1,i], 2, HPDI, 0.90)[2,]/1000
+  Fish_cost_lo <- apply(samps$carbon_cost_est[,,2,i], 2, HPDI, 0.90)[1,]/1000
+  Fish_cost_mean <- apply(samps$carbon_cost_est[,,2,i], 2, mean)/1000
+  Fish_cost_hi <- apply(samps$carbon_cost_est[,,2,i], 2, HPDI, 0.90)[2,]/1000
+  Mammals_cost_lo <- apply(samps$carbon_cost_est[,,3,i], 2, HPDI, 0.90)[1,]/1000
+  Mammals_cost_mean <- apply(samps$carbon_cost_est[,,3,i], 2, mean)/1000
+  Mammals_cost_hi <- apply(samps$carbon_cost_est[,,3,i], 2, HPDI, 0.90)[2,]/1000
+  Total_cost_lo <- apply(samps$carbon_cost_est[,,4,i], 2, HPDI, 0.90)[1,]/1000
+  Total_cost_mean <- apply(samps$carbon_cost_est[,,4,i], 2, mean)/1000
+  Total_cost_high <- apply(samps$carbon_cost_est[,,4,i], 2, HPDI, 0.90)[2,]/1000
+  temp <- cbind.data.frame(Birds_cost_lo, Birds_cost_mean, Birds_cost_hi,
+                           Fish_cost_lo, Fish_cost_mean, Fish_cost_hi,
+                           Mammals_cost_lo, Mammals_cost_mean,
+                           Mammals_cost_hi, Total_cost_lo, Total_cost_mean,
+                           Total_cost_high)
+  full_carbon_scenarios <- rbind.data.frame(full_carbon_scenarios, round(temp, digits=2))
+}
+write.table(full_carbon_scenarios, "carbon_emissions_by_village.txt", sep="\t", row.names=FALSE)

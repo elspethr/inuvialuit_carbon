@@ -1,5 +1,5 @@
 # Import tooniktoyook data
-d = read.spss("Data/Tooniktoyok/TOONIKTOYOK_SPSS_04_03_19.sav", to.data.frame = TRUE)
+d = read.spss("Data/TOONIKTOYOK_SPSS_04_03_19.sav", to.data.frame = TRUE)
 d$DATE1 = as.POSIXct(as.numeric(substr(d$DATE, 1, 10)), origin="1970-01-01")
 
 #allcost = d$FUEL_COST+d$OIL_COST+d$SUPPLIES_USE

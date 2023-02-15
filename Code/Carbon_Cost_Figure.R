@@ -2,6 +2,7 @@
 cols = (viridis(4))[c(2,3,4,1)]
 cols[3] = "chocolate4"
 
+#note phylopic 2.0 launched, rphylopic doesn't work now
 caribou = image_data("e6e864fd-8e3d-435f-9db3-dc6869c589f1", size = 128)[[1]]
 char = image_data("68304786-f291-4115-9ccd-ead068ba6f19", size = "thumb")[[1]]
 goose = image_data("7b8fb3d4-0cac-4552-8cd1-bd493b7de679", size="thumb")[[1]]
