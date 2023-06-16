@@ -1,6 +1,7 @@
 data{
   //IHS data
   int N; // N harvests reported
+  int N_took; // Hunts in Toonik dataset
   int Nsp; // # species
   int Necotype; // # species groups 
   array[N] int EW_miss; // missing harvest data
@@ -15,8 +16,8 @@ data{
   real scale_factor_error; // scale of error distribution
   array[6] int tripsperc;
   //Tooniktoyok data
-  array[118] real Fuel;
-  array[118] real EW;
+  array[N_took] real Fuel;
+  array[N_took] real EW;
   //conversion factors
   array[Nsp+6] real spEW; // edible weight data (village-specific for char)
   array[6,3] real market_costs;
@@ -25,10 +26,10 @@ data{
   array[6,2] real fuel_emissions;
 }
 transformed data{
-  array[118] real log_Fuel;
-  array[118] int zero;
+  array[N_took] real log_Fuel;
+  array[N_took] int zero;
   log_Fuel = log(Fuel);
-  for (i in 1:118) {
+  for (i in 1:N_took) {
     zero[i] = EW[i] == 0 ? 1:0;
   }
 }
@@ -41,14 +42,14 @@ parameters{
   real<lower=0,upper=1> theta;  // zinfl fact
 }
 model{
-  vector[118] mu;
+  vector[N_took] mu;
   b ~ normal(0, 1);
   a ~ normal(0, 1);
   phi ~ exponential(1);
   a2 ~ normal(0, 1);
   theta ~ beta(2, 2);
   // fuel model
-  for (i in 1:118) {
+  for (i in 1:N_took) {
     zero[i] ~ bernoulli(theta);
     if (EW[i] != 0) {
       mu[i] = a + b * log(EW[i]);

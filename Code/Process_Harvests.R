@@ -82,4 +82,8 @@ for (i in seq_along(animinorder)) {
 medharv_eco = aggregate(harv_edible$NumHarvest, by=list(harv_edible$ecotype), median, na.rm=TRUE)$x          # Note can't rerun this without reloading!
 log_meanharv_eco = aggregate(log(harv_edible$NumHarvest), by=list(harv_edible$ecotype), mean, na.rm=TRUE)$x 
 log_sdharv_eco = aggregate(log(harv_edible$NumHarvest), by=list(harv_edible$ecotype), sd, na.rm=TRUE)$x 
+
+write.csv(cbind.data.frame(aggregate(log(harv_edible$NumHarvest), by=list(harv_edible$ecotype), mean, na.rm=TRUE), log_sdharv_eco, medharv_eco), "ecotype_harv.csv")
+
 harv_edible$NumHarvest[which(is.na(harv_edible$NumHarvest))] = -1
+
