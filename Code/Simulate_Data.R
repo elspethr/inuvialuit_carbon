@@ -2,80 +2,63 @@
 
 # IHS data (i.e., EW from harvest events)
 
-# species
-foodsp = c("Caribou - Barren Ground", "Caribou - Bluenose", 
-           "Caribou - Peary", "Caribou - Porcupine", 
-           "Caribou - Union Dolphin", "Caribou - Woodland",
-           "Whale - Beluga", "Seal - Ringed", "Bear - Polar", "Moose", 
-           "Muskox", "Beaver", "Muskrat", "Hare - Arctic", "Hare - Snowshoe",
-           "Brant", "Goose - Canada", "Goose - Greater White",
-           "Goose - Ross", "Goose - Snow","Ptarmigan - Rock",
-           "Ptarmigan - Willow", "Duck - Unknown",
-           "Canvasback", "Eider - King", "Eider - Common", 
-           "Mallard", "Merganser - Common", 
-           "Scoter - Black", "Teal", "Wigeon - American", 
-           "Swan - Trumpeter",  "Swan - Tundra", 
-           "Loon - Common", "Crane - Sandhill",
-           "Char - Arctic", "Char - Dolly Varden", "Char - Land Locked",
-           "Trout - Lake", "Pike - Northern", 
-           "Whitefish - Broad", "Whitefish - Lake",
-           "Inconnu", "Cisco - Arctic", "Cisco - Least", 
-           "Cod - Greenland", "Cod - Saffron", "Flounder", 
-           "Sculpin - Fourhorn", "Burbot",  
-           "Salmon", "Smelt",  "Herring - Pacific")
-nsp = length(foodsp)
+foodsp_sim <- c("Caribou - Barren Ground", 
+                "Seal - Ringed",
+                "Hare - Arctic", 
+                "Moose", 
+                "Goose - Canada",
+                "Inconnu",
+                "Char - Arctic")
+ecotype_sim <- c("Caribou",
+                 "Seal - Ringed",
+                 "Hare",
+                 "Moose",
+                 "Goose",
+                 "Inc/White",
+                 "Char")
+markettype_sim <- c(rep("Mammal", 4),
+                    rep("Bird", 1),
+                    rep("Fish", 2))
+logmeanharv_sim <- c(0.7, 0.9, 1.4, 0.1, 2.3, 2.6, 2.4)
+sdmeanharv_sim <- c(0.7, 0.9, 1.1, 0.3, 1.2,1.5, 1.2)
+EW_sim <- c(36.5, 13, 2.9, 140, 1.05, 2.55)
+EW_sim_char <- c(1.55, 1.6, 0.65, 0.7)
+#Ulu, Paul, Akl, Sachs (no char in Tuk or Inuvik)
 
-# Species types for harvest distributions
-ecotype = c("Caribou", "Caribou", "Caribou", "Caribou", 
-            "Caribou", "Caribou - Woodland",
-            "Whale - Beluga", "Seal - Ringed", "Bear - Polar", "Moose", 
-            "Muskox", "Beaver", "Muskrat", "Hare", "Hare",
-            "Goose", "Goose", "Goose",
-            "Goose", "Goose","Ptarmigan",
-            "Ptarmigan", "Duck",
-            "Duck", "Eider", "Eider", 
-            "Duck", "Duck", 
-            "Duck", "Duck", "Duck", 
-            "Swan",  "Swan", 
-            "Loon", "Crane",
-            "Char", "Char", "Char",
-            "Trout - Lake", "Pike - Northern", 
-            "Inc/White", "Inc/White",
-            "Inc/White", "Cisco", "Cisco", 
-            "Cod - Greenland", "Cod - Saffron", "Flounder", 
-            "Sculpin - Fourhorn", "Burbot",  
-            "Char", "Smelt",  "Herring - Pacific")
-as.numeric(ecotype)
+animals_for_sim <- cbind.data.frame(foodsp_sim, ecotype_sim, markettype_sim, 
+                                    logmeanharv_sim, sdmeanharv_sim)
+nsp <- length(foodsp_sim)
 
-# Group for market equivalents
-markettype = c(rep("Mammal", 15),
-               rep("Bird", 20),
-               rep("Fish", 18))
+# generate successful and unsuccessful trips
+ntrips <- 5000
+nfailed <- rbinom(1, 5000, 0.25)
+nsim <- ntrips-nfailed
 
-# assignment to a community (1-6)
-community <- c(1:6)
+# gas use failed trips
+fuel_failed <- exp(rnorm(nfailed, 3, 1))
 
-# make a data frame to store our pretend data
-nsim <- 3000
-simIHSdat <- data.frame(sp=numeric(nsim), ecotype=numeric(nsim), 
-                        community=numeric(nsim), harv_meas=numeric(nsim))
 
+# successful trips
+true_harv_sim <- meas_harv_sim <- numeric(nsim)
 # choose a species
-simIHSdat$sp <- sample(1:nsp, nsim, replace=TRUE)
-# retrieve its ecotype
-simIHSdat$ecotype <- ecotype[]
-
-  
-# choose a community
-# simulate a harvest (each ecotype needs a lognormal distribution of harvest sizes with mean and sd and error according to the scale factor)
+x <- sample(1:nsp, nsim, replace=TRUE)
+simIHSdat_sp <- foodsp_sim[x]
+simIHSdat_ecotype <- ecotype_sim[x]
+# for each hunt simulate a true harvest, the reported harvest and the "true" edible weight
+for (i in 1:nsim) {
+  #simulate a true harvest
+  true_harv_sim[i] <- rlnorm(1, meanlog=logmeanharv_sim[x[i]], sdlog=sdmeanharv_sim[x[i]])
+  # simulate the observation with error
+  meas_harv_sim[i] <- rlnorm(1, meanlog=log(true_harv_sim[i]), sdlog=0.15)
+  # calculate the "true" EW
+  if (x[i] != 7) {EW_harv_sim[i] <- true_harv_sim[i]*EW_sim[x[i]]}
+  if (x[i] == 7) {
+    vill_samp <- sample(1:4, 1, replace=FALSE)
+    EW_harv_sim[i] <- true_harv_sim[i]*EW_sim_char[vill_samp]
+  }
 }
+# fuel use based on the edible weight
+fuel_successful <- exp(rnorm(nsim, mean=(2 + 0.4*(log(EW_harv_sim))), sd=0.8))
 
-# Tooniktoyok data (i.e., fuel use by kg)
-# observed trips
-# simulate success or no success
-# if no success, simulate fuel use
-# if success, simulate kg return, calculate fuel use from linear model 
-
-
-# Other inputs:
-# EW, market costs, market emissions, fuel costs, fuel emissions are all fixed
+#make a data frame for the successful hunts
+sim_dat <- cbind.data.frame(simIHSdat_sp, true_harv_sim, meas_harv_sim, EW_harv_sim, fuel_successful)
