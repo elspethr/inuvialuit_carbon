@@ -4,6 +4,7 @@ data{
   int N_took; // Hunts in Toonik dataset
   int Nsp; // # species
   int Necotype; // # species groups 
+  int sim; // simulated or real data?
   array[N] int EW_miss; // missing harvest data
   array[N] real harv_meas; // observed report
   array[N] int species; // species of that report
@@ -97,12 +98,23 @@ generated quantities{
     for (i in 1:N) {
       harv_true[i] = exp(log_harv_true[i]);
       sim_harv[i] = lognormal_rng(log_harv_true[i], scale_factor_error);
-      if (species[i] == 12 || species[i] == 13) {
-        int z = community[i];
-        EW_est[i] = sim_harv[i]*spEW[53+z];
+      if (sim==1) {
+        if (species[i] == 7) {
+          int z = community[i];
+          EW_est[i] = sim_harv[i]*spEW[Nsp+z];
+        }
+        else {
+          EW_est[i] = sim_harv[i]*spEW[species[i]];
+        }
       }
-      else {
+      if (sim==0) {
+        if (species[i] == 12 || species[i] == 13) {
+          int z = community[i];
+          EW_est[i] = sim_harv[i]*spEW[Nsp+z];
+        }
+        else {
         EW_est[i] = sim_harv[i]*spEW[species[i]];
+        }
       }
       fuel_est[i] = exp(normal_rng(a + b*log(EW_est[i]), phi[1]));
       harvest_est[7,4] += EW_est[i];

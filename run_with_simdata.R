@@ -43,7 +43,8 @@ dat3 = list(EW = Toonik_sim$harvest,
             market_costs = market_costs,
             market_emissions = market_emissions, #array of carbon scenarios
             fuel_cost = 1.76,
-            fuel_emissions = rail_emissions_litre[,2:3])
+            fuel_emissions = rail_emissions_litre[,2:3],
+            sim=1)
 
 harvm3 <- stan(file = "Code/Carbon_model.stan", data = dat3, 
                control=list(adapt_delta=0.99, max_treedepth=20), 
@@ -58,15 +59,47 @@ plot(samps$EW_est[,1697], type="l")
 plot(samps$market_cost_est[,7,2], type="l") 
 plot(samps$fuel_total_cost[,7], type="l") 
 
-# Output harvest estimates for sanity check
-sim_90lo = sim_90hi = numeric(N)
-for (i in 1:N) {
-  HPDI_perh = HPDI(samps$sim_harv[,i], 0.90)
-  sim_90lo[i] = HPDI_perh[1]
-  sim_90hi[i] = HPDI_perh[2]
-}
-write.csv(cbind.data.frame(species=harv_edible$SpeciesNam, report=dat3$harv_meas,
-                           mean=apply(samps$sim_harv, 2, mean), 
-                           loHPDI=sim_90lo, hiHDPI=sim_90hi), 
-          "simulated_harvs.csv")
+# parameters to compare
+
+# Fuel model
+samps$a #fuel intercept (success; 2)
+samps$b #fuel slope (0.4)
+samps$a2 # fuel intercept (failure; 3)
+samps$phi[1] #fuel error (success; 0.8)
+samps$phi[2] # error 
+samps$theta
+
+par(mfrow=c(6,1), mar=c(0,0,3,0))
+plot(density(samps$theta), axes=FALSE, xlab="", ylab="", main="Theta (Probability failure)")
+abline(v=0.25, col="red")
+plot(density(samps$a), axes=FALSE, xlab="", ylab="", main="a (Fuel intercept)")
+abline(v=2, col="red")
+plot(density(samps$b), axes=FALSE, xlab="", ylab="", main="b (Fuel slope)")
+abline(v=0.4, col="red")
+plot(density(samps$phi[,1]), axes=FALSE, xlab="", ylab="", main="phi[1] (Fuel error linear predictor)")
+abline(v=0.8, col="red")
+plot(density(samps$a2), axes=FALSE, xlab="", ylab="", main="a2 (Fuel intercept; failure)")
+abline(v=3, col="red")
+plot(density(samps$phi[,2]), axes=FALSE, xlab="", ylab="", main="phi[2] (Fuel error; failure)")
+abline(v=1, col="red")
+
+# Measurement model
+mean_harv_heap <- apply(samps$harv_true, 2, median)
+mean_harv_sim <- apply(samps$sim_harv, 2, median)
+mean_fuel_est <- apply(samps$sim_harv, 2, median)
+
+par(mfrow=c(3,1), mar=c(2,0,3,0))
+IHS_sim$harv_error <- mean_harv_sim-IHS_sim$true_harv_sim
+hist(IHS_sim$harv_error, breaks=1000, main="Estimate minus true harvest size")
+IHS_sim$EW_error <- apply(samps$EW_est, 2, mean) - IHS_sim$EW_harv_sim
+hist(IHS_sim$EW_error, breaks=1000, main="Estimate minus true harvest (edible weight)")
+IHS_sim$fuel_error <- mean_fuel_est - IHS_sim$fuel_successful
+hist(IHS_sim$fuel_error, breaks=1000, main="Estimate minus true fuel use")
+
+#what are the outliers
+#OK so we have some problems with big fish harvests (makes sense)
+IHS_sim[which(abs(IHS_sim$harv_error)>100),]
+IHS_sim[which(abs(IHS_sim$EW_error)>100),]
+IHS_sim[which(abs(IHS_sim$fuel_error)>100),]
+
 

@@ -28,7 +28,7 @@ markettype_sim_num <- c(rep(3, 4),
 logmeanharv_sim <- c(0.7, 0.9, 1.4, 0.1, 2.3, 2.6, 2.4)
 sdmeanharv_sim <- c(0.7, 0.9, 1.1, 0.3, 1.2,1.5, 1.2) #CHECK IS THIS ON THE RIGHT SCALE?!
 # edible weight of the animal
-EW_sim <- c(36.5, 13, 2.9, 140, 1.05, 2.55)
+EW_sim <- c(36.5, 13, 2.9, 140, 1.05, 2.55, 9999) #fake N for indexing
 #char are special: different in each community
 EW_sim_char <-  c(0.65, 0.65, 1.6, 0.7, 1, 1.65)
 #Ulu 6, Paul 3, Akl 1, Sachs 4 (technically no char in Tuk 5 or Inuvik 2)
