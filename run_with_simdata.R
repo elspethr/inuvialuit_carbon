@@ -1,5 +1,6 @@
 ####################################### Load libraries
 library(foreign)
+library(rlang)
 library(rethinking)
 library(viridis)
 library(scales)
@@ -48,7 +49,7 @@ dat3 = list(EW = Toonik_sim$harvest,
 
 harvm3 <- stan(file = "Code/Carbon_model.stan", data = dat3, 
                control=list(adapt_delta=0.99, max_treedepth=20), 
-               iter=4000, chains=3, seed=4492)
+               iter=1000, chains=1, seed=4492)
 
 # Save samps for working without rerunning model
 samps = extract.samples(harvm3)
@@ -69,18 +70,18 @@ samps$phi[1] #fuel error (success; 0.8)
 samps$phi[2] # error 
 samps$theta
 
-par(mfrow=c(6,1), mar=c(0,0,3,0))
-plot(density(samps$theta), axes=FALSE, xlab="", ylab="", main="Theta (Probability failure)")
+par(mfrow=c(6,1), mar=c(3,0,3,0))
+plot(density(samps$theta), axes=TRUE, ylab="", main="Theta (Probability failure)")
 abline(v=0.25, col="red")
-plot(density(samps$a), axes=FALSE, xlab="", ylab="", main="a (Fuel intercept)")
+plot(density(samps$a), axes=TRUE, ylab="", main="a (Fuel intercept)")
 abline(v=2, col="red")
-plot(density(samps$b), axes=FALSE, xlab="", ylab="", main="b (Fuel slope)")
+plot(density(samps$b), axes=TRUE,  ylab="", main="b (Fuel slope)")
 abline(v=0.4, col="red")
-plot(density(samps$phi[,1]), axes=FALSE, xlab="", ylab="", main="phi[1] (Fuel error linear predictor)")
+plot(density(samps$phi[,1]), axes=TRUE, ylab="", main="phi[1] (Fuel error linear predictor)")
 abline(v=0.8, col="red")
-plot(density(samps$a2), axes=FALSE, xlab="", ylab="", main="a2 (Fuel intercept; failure)")
+plot(density(samps$a2), axes=TRUE, ylab="", main="a2 (Fuel intercept; failure)")
 abline(v=3, col="red")
-plot(density(samps$phi[,2]), axes=FALSE, xlab="", ylab="", main="phi[2] (Fuel error; failure)")
+plot(density(samps$phi[,2]), axes=TRUE, ylab="", main="phi[2] (Fuel error; failure)")
 abline(v=1, col="red")
 
 # Measurement model

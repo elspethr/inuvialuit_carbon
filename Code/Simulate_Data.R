@@ -26,7 +26,7 @@ markettype_sim_num <- c(rep(3, 4),
                     rep(2, 2))
 # harvest size characteristics for each animal type (log mean and sd)
 logmeanharv_sim <- c(0.7, 0.9, 1.4, 0.1, 2.3, 2.6, 2.4)
-sdmeanharv_sim <- c(0.7, 0.9, 1.1, 0.3, 1.2,1.5, 1.2) #CHECK IS THIS ON THE RIGHT SCALE?!
+sdmeanharv_sim <- c(0.7, 0.9, 1.1, 0.3, 1.2, 1.5, 1.2)
 # edible weight of the animal
 EW_sim <- c(36.5, 13, 2.9, 140, 1.05, 2.55, 9999) #fake N for indexing
 #char are special: different in each community
@@ -37,7 +37,7 @@ EW_sim_char <-  c(0.65, 0.65, 1.6, 0.7, 1, 1.65)
 animals <- cbind.data.frame(foodsp_sim, ecotype_sim, markettype_sim, 
                                     logmeanharv_sim, sdmeanharv_sim)
 
-sim_dat <- function(ntrips, animals, mode) {
+sim_dat <- function(ntrips, animals, mode) { #add parameter argument so we can explore
   
   # generate successful and unsuccessful harvest trips
   nfailed <- rbinom(1, ntrips, 0.25) # 0.25 prob of a failed trip
