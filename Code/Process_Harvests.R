@@ -3,11 +3,8 @@
 # Author: Elspeth Ready
 # Contact: elspeth_ready@eva.mpg.de
 
-# Define villages
-villages = c("Aklavik", "Inuvik", "Paulatuk", "Sachs Harbour", "Tuktoyaktuk", "Ulukhaktok")
-
 # Import harvest and edible weight data
-harvdat = read.csv("Data/harvest2018_cleaned.csv") # Output of IHS_cleaning.R, not publically availible
+harvdat = read.csv("Data/harvest2018_cleaned.csv") # Output of IHS_cleaning.R, not publicly available
 EWdat = read.csv("Data/edibleweight_data.csv")     # Included
 
 EW_char = c(0.65, 0.65, 1.6, 0.7, NA, 1.65)   # char weights by village, from Usher
@@ -86,4 +83,30 @@ log_sdharv_eco = aggregate(log(harv_edible$NumHarvest), by=list(harv_edible$ecot
 write.csv(cbind.data.frame(aggregate(log(harv_edible$NumHarvest), by=list(harv_edible$ecotype), mean, na.rm=TRUE), log_sdharv_eco, medharv_eco), "ecotype_harv.csv")
 
 harv_edible$NumHarvest[which(is.na(harv_edible$NumHarvest))] = -1
+
+## process to make length N variables for stan model
+species_id = as.numeric(as.factor(harv_edible$SpeciesNam))
+ecotype_id = as.numeric(as.factor(harv_edible$ecotype))
+vill_id <- as.numeric(as.factor(harv_edible$Community))
+markettype_id = as.numeric(as.factor(harv_edible$markettype))
+
+harv_edible$log_meanharv_eco = log_meanharv_eco[ecotype_id]
+harv_edible$log_sdharv_eco = log_sdharv_eco[ecotype_id]
+
+for (i in 1:length(harv_edible$SpeciesNam)){
+  if (harv_edible$SpeciesNam[i] %in% c("Char - Arctic", "Char - Dolly Varden")) {
+    harv_edible$spEW[i] <- c(0.65, 0.65, 1.6, 0.7, 1, 1.65)[vill_id[i]]
+  }
+  else {
+    harv_edible$spEW[i] <- EWorder[species_id[i]]
+  }
+  harv_edible$mc[i] <- market_costs[vill_id[i], markettype_id[i]]
+  harv_edible$barge_low[i] <- market_emissions[vill_id[i], 1, markettype_id[i]]
+  harv_edible$barge_high[i] <- market_emissions[vill_id[i], 2, markettype_id[i]]
+  harv_edible$mail_low[i] <- market_emissions[vill_id[i], 3, markettype_id[i]]
+  harv_edible$mail_high[i] <- market_emissions[vill_id[i], 4, markettype_id[i]]
+  harv_edible$fuel_emissions_lo[i] <- rail_emissions_litre[vill_id[i],2]
+  harv_edible$fuel_emissions_high[i] <- rail_emissions_litre[vill_id[i],3]
+}
+
 

@@ -214,12 +214,12 @@ harvest2018$HarvestNum[which(harvest2018$Community=="Ulukhaktok" & harvest2018$H
 harvest2018$HarvestNum[which(harvest2018$Community=="Ulukhaktok" & harvest2018$HarvestNum %in% c(1067, 1068))] = 2
 harvest2018$HarvestNum[harvest2018$ID == 6766] = 97
 
-for (vill in villages) {
-  print(vill)
-  hunters = unique(as.numeric(harvest2018$HarvestNum[harvest2018$Community==vill]))
-  print(length(hunters))
-  print(sort(hunters, na.last=TRUE))
-}
+#for (vill in villages) {
+#  print(vill)
+#  hunters = unique(as.numeric(harvest2018$HarvestNum[harvest2018$Community==vill]))
+#  print(length(hunters))
+#  print(sort(hunters, na.last=TRUE))
+#}
 
 # Fix "catch and releases" before tallying harvests 
 harvest2018$NumHarvest[which(harvest2018$ID==6576)] = 2
