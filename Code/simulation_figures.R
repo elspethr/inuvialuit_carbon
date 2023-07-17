@@ -4,8 +4,8 @@ pdf("performance_simulated_data.pdf")
 par(mfrow=c(4,1), mar=c(3,4,3,1))
 # how does the actual harvest compare to the estimated one
 
-plot(density(samps$total_harvest_estimate), axes=TRUE,  ylab="", xlab="", 
-     main="Total weight", xlim=c(1e5, 1.3e5), type="n")
+plot(density(samps$total_harvest_estimate), axes=TRUE,
+     ylab="", xlab="", main="Total weight", type="n")
 abline(v=samps$total_harvest_estimate, col=alpha("blue", 0.25), lwd=1)
 abline(v=sum(IHS_sim$true_edible_weight), col="red", lwd=2)
 #abline(v=sum(IHS_sim$reported_edible_weight), col="red", lwd=2)

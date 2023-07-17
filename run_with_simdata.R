@@ -92,7 +92,7 @@ dat3 = list(EW = Toonik_sim$reported_edible_weight, #or use true???
 
 harvm3 <- stan(file = "Code/Carbon_model.stan", data = dat3, 
                control=list(adapt_delta=0.99, max_treedepth=20), 
-               iter=1000, chains=2, seed=4492)
+               iter=1000, chains=1, seed=4492)
 
 # Save samps for working without rerunning model
 samps = extract.samples(harvm3)

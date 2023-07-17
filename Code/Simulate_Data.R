@@ -56,20 +56,20 @@ simulate_a_trip = function(animals, parameters){
   # simulate encounters 
   logmean_encounter = parameters$fuel_encounter[1] + parameters$fuel_encounter[2]*log(parameters$fuel)
   log_encounter = rnorm(1, mean=logmean_encounter, sd=parameters$fuel_encounter[3])
+  if (log_encounter <= 0) {log_encounter==0} ### NEW ###
   encounter = exp(log_encounter)*success
   #encounter = encountered
 
   # simulate quantity of items conditional on encounter number
   harvest_per_encounter = rlnorm(1, meanlog=animals_subset$log_harvest_per_encounter_mu, 
                                  sdlog=animals_subset$log_harvest_per_encounter_sd)
-  total_harvest = encounter*harvest_per_encounter
-  
+  total_harvest = harvest_per_encounter*encounter
 
   # simulate reports of encounters, i.e., heaping
   #DEAL WITH os
   reporting_error_harvest = rlnorm(1, meanlog=log(total_harvest), sdlog=0.15)
   reported_harvest = round(reporting_error_harvest, -n_int_digits(reporting_error_harvest)) 
-  # if report < 1 round to one instead?
+  #if (reported_harvest < 1) {reported_harvest = 1}
   reported_harvest = success*reported_harvest #re-zero the failures
 
   # simulate edible weight linked to reported encounters 
