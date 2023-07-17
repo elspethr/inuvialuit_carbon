@@ -115,8 +115,10 @@ generated quantities{
  array[6] real fuel_failures_low_emissions;
  array[6] real fuel_failures_high_emissions;
  
- //real Fuel_usage_successes;
- //real EW_successes;
+ real total_harvest_estimate;
+ real fuel_usage_successes;
+ real fuel_usage_failures_total; 
+ real total_fuel_usage;
 
  // IHS, in-sample
 
@@ -133,9 +135,6 @@ generated quantities{
    fuel_emissions_low[i] = fuel_usage[i] * scalar_fuel_emissions_low[i];
    fuel_emissions_high[i] = fuel_usage[i] * scalar_fuel_emissions_high[i];
  }
-
- //Fuel_usage_successes = sum(fuel_usage);
- //EW_successes = sum(harvest_weight);
  
  // IHS, out-of-sample
  for (k in 1:6) {
@@ -150,4 +149,11 @@ generated quantities{
   fuel_failures_low_emissions[k] = fuel_usage_failures[k] * scalar_fuel_emissions_villages[k,1];
   fuel_failures_high_emissions[k] = fuel_usage_failures[k] * scalar_fuel_emissions_villages[k,2];
  }
+ 
+ // outcomes for testing
+ total_harvest_estimate = sum(harvest_weight);
+ fuel_usage_successes = sum(fuel_usage);
+ fuel_usage_failures_total = sum(fuel_usage_failures);
+ total_fuel_usage = fuel_usage_successes + fuel_usage_failures_total;
+ 
 }
