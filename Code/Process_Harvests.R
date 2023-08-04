@@ -76,11 +76,16 @@ for (i in seq_along(animinorder)) {
   else {EWorder[i] = mean(EW_char, na.rm=TRUE)}
 }
 
-medharv_eco = aggregate(harv_edible$NumHarvest, by=list(harv_edible$ecotype), median, na.rm=TRUE)$x          # Note can't rerun this without reloading!
 log_meanharv_eco = aggregate(log(harv_edible$NumHarvest), by=list(harv_edible$ecotype), mean, na.rm=TRUE)$x 
 log_sdharv_eco = aggregate(log(harv_edible$NumHarvest), by=list(harv_edible$ecotype), sd, na.rm=TRUE)$x 
 
-write.csv(cbind.data.frame(aggregate(log(harv_edible$NumHarvest), by=list(harv_edible$ecotype), mean, na.rm=TRUE), log_sdharv_eco, medharv_eco), "ecotype_harv.csv")
+meanharv_eco = aggregate(harv_edible$NumHarvest, by=list(harv_edible$ecotype), mean, na.rm=TRUE)$x
+sdharv_eco = aggregate(harv_edible$NumHarvest, by=list(harv_edible$ecotype), sd, na.rm=TRUE)$x 
+# don't need these because we always use normals with mu and sigma of log
+#log_meanharv_eco = log((meanharv_eco$x^2)/(sqrt(meanharv_eco$x^2+sdharv_eco^2)))
+#log_sdharv_eco = sqrt(log(1+(sdharv_eco^2/meanharv_eco$x^2)))
+
+write.csv(cbind.data.frame(ecotype=sort(unique(harv_edible$ecotype)), meanharv_eco, sdharv_eco, log_meanharv_eco, log_sdharv_eco), "ecotype_harv.csv", row.names=FALSE)
 
 harv_edible$NumHarvest[which(is.na(harv_edible$NumHarvest))] = -1
 

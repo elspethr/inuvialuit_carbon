@@ -10,7 +10,7 @@ villages = c("Aklavik", "Inuvik", "Paulatuk", "Sachs Harbour", "Tuktoyaktuk", "U
 
 ### Set working directory ###
 #setwd("C:\\Users\\cody_ross\\Desktop\\inuvialuit_carbon-main")
-#setwd("/Users/elspethready/repos/inuvialuit_carbon")
+setwd("/Users/elspethready/repos/inuvialuit_carbon")
 
 ### Load special functions ###
 source("Code/Functions.R")

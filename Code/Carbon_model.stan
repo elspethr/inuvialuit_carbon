@@ -1,5 +1,5 @@
 data{
-  // IHS data
+  //# IHS data
   int N;                   // N harvests reported
   int N_took;              // Hunts in Toonik dataset
   int Nsp;                 // Species
@@ -13,17 +13,17 @@ data{
   array[N] int community;  // Where?
 
   // "Priors" for modeling realistic measurement error in IHS data
-  array[N] real log_meanharv_eco; // Mean harvest size for each "ecotype"
-  array[N] real log_sdharv_eco;  // SD harvest size for each "ecotype"
-  real scale_factor_error;      // Scale of error distribution
-  array[6] int tripsperc;       // Trips per community
+  array[N] real log_meanharv_eco;  // Mean harvest size for each "ecotype"
+  array[N] real log_sdharv_eco;    // SD harvest size for each "ecotype"
+  real scale_factor_error;         // Scale of error distribution
+  array[6] int tripsperc;          // Trips per community
 
   // Tooniktoyok data
   array[N_took] real Fuel;        
   array[N_took] real EW;
 
   // Conversion factors
-  array[N] real spEW;           // Edible weight data (village-specific for char)
+  array[N] real spEW;              // Edible weight data (village-specific for char)
   array[N] real market_scalar;
   array[N] real scalar_barge_low;
   array[N] real scalar_barge_high;
@@ -45,6 +45,7 @@ transformed data{
   log_HM = log(harv_meas);
   
   log_Fuel = log(Fuel);
+
   for (i in 1:N_took) {
     zero_EW[i] = EW[i] == 0 ? 1:0;
     log_EW[i] = EW[i] == 0 ? -99999 : log(EW[i]);
@@ -52,9 +53,9 @@ transformed data{
 }
 
 parameters{
-  array[N] real log_harv_true;      // Estimated "true" harvest
+  array[N] real log_harv_true;      // Estimated "true" harvest 
 
-  real theta;                       // Z infl fact
+  real theta;                       // Zero infl fact
   vector[2] alpha;                  // Parameters for positive EW
   real<lower=0> phi_alpha;          // SD fuel dists
 
@@ -85,10 +86,14 @@ model{
 
   // Deheaping model
   for(i in 1:N){
-      log_harv_true[i] ~ normal(log_meanharv_eco[ecotype[i]], log_sdharv_eco[ecotype[i]]); 
-
+   //if(EW_miss[i]!=0){
+   //real mu = log(log_meanharv_eco[ecotype[i]]^2/(sqrt(log_meanharv_eco[ecotype[i]]^2+log_sdharv_eco[ecotype[i]])));
+   //real sigma = sqrt(log(1+(log_sdharv_eco[ecotype[i]]^2/log_meanharv_eco[ecotype[i]]^2)));
+   //log_harv_true[i] ~ normal(mu, sigma);
+     log_harv_true[i] ~ normal(log_meanharv_eco[ecotype[i]], log_sdharv_eco[ecotype[i]]); // T[,U]
+   //}
     if(EW_miss[i]==0){
-      log_HM[i] ~ normal(log_harv_true[i], scale_factor_error); 
+      log_HM[i] ~ normal(log_harv_true[i], scale_factor_error);
     }
   }   
 }
@@ -114,14 +119,13 @@ generated quantities{
  array[6] real fuel_failures_costs;
  array[6] real fuel_failures_low_emissions;
  array[6] real fuel_failures_high_emissions;
- 
- real total_harvest_estimate;
- real fuel_usage_successes;
- real fuel_usage_failures_total; 
- real total_fuel_usage;
+
+ real fuel_usage_in;
+ real fuel_usage_out;
+ real fuel_usage_all;
+ real total_harvest_weight;
 
  // IHS, in-sample
-
  for (i in 1:N) {
    harvest_number[i] = exp(log_harv_true[i]);
    harvest_weight[i] = harvest_number[i] * spEW[i];
@@ -135,6 +139,8 @@ generated quantities{
    fuel_emissions_low[i] = fuel_usage[i] * scalar_fuel_emissions_low[i];
    fuel_emissions_high[i] = fuel_usage[i] * scalar_fuel_emissions_high[i];
  }
+
+ fuel_usage_in = sum(fuel_usage);
  
  // IHS, out-of-sample
  for (k in 1:6) {
@@ -149,11 +155,10 @@ generated quantities{
   fuel_failures_low_emissions[k] = fuel_usage_failures[k] * scalar_fuel_emissions_villages[k,1];
   fuel_failures_high_emissions[k] = fuel_usage_failures[k] * scalar_fuel_emissions_villages[k,2];
  }
- 
- // outcomes for testing
- total_harvest_estimate = sum(harvest_weight);
- fuel_usage_successes = sum(fuel_usage);
- fuel_usage_failures_total = sum(fuel_usage_failures);
- total_fuel_usage = fuel_usage_successes + fuel_usage_failures_total;
- 
+
+ fuel_usage_out = sum(fuel_usage_failures);
+
+ fuel_usage_all = fuel_usage_in + fuel_usage_out;
+
+ total_harvest_weight = sum(harvest_weight);
 }
