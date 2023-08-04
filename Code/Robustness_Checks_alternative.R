@@ -18,7 +18,7 @@ if (!dir.exists("noecodist/alternative")){
 
 
 ## First check around fuel on number of encounters
-Q = 2
+Q = 10
 animals = make_animals()
 results = array(NA,c(2,Q,Q,4,4))
 
