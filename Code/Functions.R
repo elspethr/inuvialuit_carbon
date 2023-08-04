@@ -172,14 +172,11 @@ simulate_a_trip = function(animals, parameters){
     encounter = exp(log_encounter)*success
   
     # simulate quantity of items conditional on encounter number
-    #harvest_per_encounter = rlnorm(1, meanlog=animals_subset$log_harvest_per_encounter_mu, 
-    #                                  sdlog=animals_subset$log_harvest_per_encounter_sd)
     harvest_per_encounter = exp(rnorm(1, mean=animals_subset$log_harvest_per_encounter_mu, 
                                    sd=animals_subset$log_harvest_per_encounter_sd))
     total_harvest = success*harvest_per_encounter
   
     # simulate reports of encounters, i.e., heaping
-    #reporting_error_harvest = rlnorm(1, meanlog=log(total_harvest), sdlog=0.1)
     reporting_error_harvest = exp(rnorm(1, mean=log(total_harvest), sd=0.1))
     reported_harvest = round(reporting_error_harvest,-n_int_digits(reporting_error_harvest)) 
     reported_harvest = success*reported_harvest #re-zero the failures
@@ -237,7 +234,7 @@ simulate_a_harvest_season = function(N_trips, animals, parameters){
 ###########################################################################################
 ## Iterate model over simulations ##
 ###########################################################################################
-iToraTor = function(animals, parameters){
+iToraTor = function(animals, parameters, model){
  IHS = simulate_a_harvest_season(N_trips=2000, animals=animals, parameters=parameters)
  Toonik = simulate_a_harvest_season(N_trips=120, animals=animals, parameters=parameters)
 
@@ -247,7 +244,7 @@ iToraTor = function(animals, parameters){
 
  dat = to_long_format(IHS, Toonik)
 
- model = cmdstanr::cmdstan_model("Code/Carbon_model.stan")
+ model = cmdstanr::cmdstan_model(model)
  fit = model$sample(data = dat,
                     seed = 4492,
                     chains = 1,

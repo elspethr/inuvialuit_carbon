@@ -86,7 +86,9 @@ model{
 
   // Deheaping model
   for(i in 1:N){
-    log_harv_true[i] ~ normal(log_meanharv_eco[ecotype[i]], log_sdharv_eco[ecotype[i]]); 
+   if(EW_miss[i]!=0){
+     log_harv_true[i] ~ normal(log_meanharv_eco[ecotype[i]], log_sdharv_eco[ecotype[i]]); 
+   }
     if(EW_miss[i]==0){
       log_HM[i] ~ normal(log_harv_true[i], scale_factor_error);
     }

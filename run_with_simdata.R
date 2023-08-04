@@ -23,7 +23,7 @@ source("Code/Functions.R")
 source("Code/Calculate_Emissions.R")
 
 ### Run robustness checks around empirical parameter set ###
-#source("Code/Robustness_Checks.R")
+source("Code/Robustness_Checks.R")
 
 ### Source alternative functions for other simulation approach ###
 source("Code/Functions_alternative.R")
@@ -31,11 +31,7 @@ source("Code/Functions_alternative.R")
 ### Run robustness checks around empirical parameter set for alternative approach ###
 source("Code/Robustness_Checks_alternative.R")
 
-#currently running basic version of alternative (OK!)
-#then run without species dist 
-#rerun with species dist (bc zeros were in error)
-#then figure out the log normal scale
-#then run the 4 sims again
+#next run the 4 sims again
 #then run the models again
 #redo figs and tables
 #update text

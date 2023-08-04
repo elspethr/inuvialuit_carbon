@@ -34,12 +34,12 @@ simulate_a_trip <- function(animals, parameters) {
     while (true_edible_weight > 1050) { #max observed harvest is 1020 kg
 
       # simulate quantity of items conditional on encounter number
-      harvest_per_trip = rlnorm(1, meanlog=animals_subset$log_harvest_per_encounter_mu, 
-                                   sdlog=animals_subset$log_harvest_per_encounter_sd)
+      harvest_per_trip = exp(rnorm(1, mean=animals_subset$log_harvest_per_encounter_mu, 
+                                   sd=animals_subset$log_harvest_per_encounter_sd))
       total_harvest = success*harvest_per_trip
       
       # simulate reports of encounters, i.e., heaping
-      reporting_error_harvest = rlnorm(1, meanlog=log(total_harvest), sdlog=0.1)
+      reporting_error_harvest = exp(rnorm(1, mean=log(total_harvest), sd=0.1))
       reported_harvest = round(reporting_error_harvest,-n_int_digits(reporting_error_harvest)) 
       reported_harvest = success*reported_harvest #re-zero the failures
       
