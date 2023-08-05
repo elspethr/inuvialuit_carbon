@@ -161,6 +161,7 @@ for(q in 1:Q){
 }
 
 for (i in 1:2){
+  modelname <- c("baseline", "noecodist")[i]
   # Plot Mean
   A = results[i,,,2,3]/results[i,,,1,3]
   rownames(A) = sweep
