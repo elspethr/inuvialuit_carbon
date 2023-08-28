@@ -82,8 +82,8 @@ log_sdharv_eco = aggregate(log(harv_edible$NumHarvest), by=list(harv_edible$ecot
 meanharv_eco = aggregate(harv_edible$NumHarvest, by=list(harv_edible$ecotype), mean, na.rm=TRUE)$x
 sdharv_eco = aggregate(harv_edible$NumHarvest, by=list(harv_edible$ecotype), sd, na.rm=TRUE)$x 
 # don't need these because we always use normals with mu and sigma of log
-#log_meanharv_eco = log((meanharv_eco$x^2)/(sqrt(meanharv_eco$x^2+sdharv_eco^2)))
-#log_sdharv_eco = sqrt(log(1+(sdharv_eco^2/meanharv_eco$x^2)))
+#log_meanharv_eco = log((meanharv_eco^2)/(sqrt(meanharv_eco^2+sdharv_eco^2)))
+#log_sdharv_eco = sqrt(log(1+(sdharv_eco^2/meanharv_eco^2)))
 
 write.csv(cbind.data.frame(ecotype=sort(unique(harv_edible$ecotype)), meanharv_eco, sdharv_eco, log_meanharv_eco, log_sdharv_eco), "ecotype_harv.csv", row.names=FALSE)
 

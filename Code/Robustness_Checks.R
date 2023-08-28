@@ -1,11 +1,11 @@
 ### Checking model performance on simulated data ###
 
-if (!dir.exists("baseline")){
-  dir.create("baseline")
+if (!dir.exists("Robustness")){
+  dir.create("Robustness")
 }else{print("dir exists")}
 
-if (!dir.exists("noecodist")){
-  dir.create("noecodist")
+if (!dir.exists("Robustness_noecodist")){
+  dir.create("Robustness_noecodist")
 }else{print("dir exists")}
 
 
@@ -36,7 +36,7 @@ for(q in 1:Q){
 
 for (i in 1:2) {
   # Plot Mean
-  modelname <- c("baseline", "noecodist")[i]
+  modelname <- c("Robustness", "Robustness_noecodist")[i]
   A = results[i,,,2,3]/results[i,,,1,3]
   rownames(A) = sweep
   colnames(A) = sweep2
@@ -91,7 +91,7 @@ for (i in 1:2) {
     scale_fill_gradient2(midpoint = 1, low = "blue", mid = "grey90", high = "red") +
     labs(x="Fuel Enc. SD. ", y="Fuel Enc. Int. ", title="Matrix") 
   
-  ggsave(paste0(modelname, "/FuelEncounters_M_harvest.pdf"), bob1, width = 6, height = 6)
+  ggsave(paste0(modelname, "/harvest_FuelEncounters_M.pdf"), bob1, width = 6, height = 6)
   
   # Plot Lower HPDI (HARVEST)
   A = results[i,,,3,4]/results[i,,,1,4]
@@ -105,7 +105,7 @@ for (i in 1:2) {
     scale_fill_gradient2(midpoint = 1, low = "blue", mid = "grey90", high = "red") +
     labs(x="Fuel Enc. SD. ", y="Fuel Enc. Int. ", title="Matrix") 
   
-  ggsave(paste0(modelname, "/FuelEncounters_L_harvest.pdf"), bob2, width = 6, height = 6)
+  ggsave(paste0(modelname, "/harvest_FuelEncounters_L.pdf"), bob2, width = 6, height = 6)
   
   # Plot Upper HPDI (HARVEST)
   A = results[i,,,4,4]/results[i,,,1,4]
@@ -119,7 +119,7 @@ for (i in 1:2) {
     scale_fill_gradient2(midpoint = 1, low = "blue", mid = "grey90", high = "red") +
     labs(x="Fuel Enc. SD.  ", y="Fuel Enc. Int.  ", title="Matrix") 
   
-  ggsave(paste0(modelname, "/FuelEncounters_H_harvest.pdf"), bob3, width = 6, height = 6)
+  ggsave(paste0(modelname, "/harvest_FuelEncounters_H.pdf"), bob3, width = 6, height = 6)
 }
          
 ## Next check around fuel on successes
@@ -146,7 +146,7 @@ for(q in 1:Q){
 }
 
 for (i in 1:2){ 
-  modelname <- c("baseline", "noecodist")[i]
+  modelname <- c("Robustness", "Robustness_noecodist")[i]
   # Plot Mean
   A = results[i,,,2,3]/results[i,,,1,3]
   rownames(A) = sweep
@@ -202,7 +202,7 @@ for (i in 1:2){
    scale_fill_gradient2(midpoint = 1, low = "blue", mid = "grey90", high = "red") +
    labs(x="Fuel Suc. SD.", y="Fuel Suc. Int.", title="Matrix") 
   
-  ggsave(paste0(modelname, "/FuelSuccess_M_harvest.pdf"), bob1, width = 6, height = 6)
+  ggsave(paste0(modelname, "/harvest_FuelSuccess_M.pdf"), bob1, width = 6, height = 6)
   
   # Plot Lower HPDI (HARVEST)
   A = results[i,,,3,4]/results[i,,,1,4]
@@ -216,7 +216,7 @@ for (i in 1:2){
    scale_fill_gradient2(midpoint = 1, low = "blue", mid = "grey90", high = "red") +
    labs(x="Fuel Suc. SD.", y="Fuel Suc. Int.", title="Matrix") 
   
-  ggsave(paste0(modelname, "/FuelSuccess_L_harvest.pdf"), bob2, width = 6, height = 6)
+  ggsave(paste0(modelname, "/harvest_FuelSuccess_L.pdf"), bob2, width = 6, height = 6)
   
   # Plot Upper HPDI (HARVEST)
   A = results[i,,,4,4]/results[i,,,1,4]
@@ -230,7 +230,7 @@ for (i in 1:2){
    scale_fill_gradient2(midpoint = 1, low = "blue", mid = "grey90", high = "red") +
    labs(x="Fuel Suc. SD.", y="Fuel Suc. Int.", title="Matrix") 
   
-  ggsave(paste0(modelname, "/FuelSuccess_H_harvest.pdf"), bob3, width = 6, height = 6)       
+  ggsave(paste0(modelname, "/harvest_FuelSuccess_H.pdf"), bob3, width = 6, height = 6)       
 }  
   
   ## Check around shape of fuel use
@@ -257,7 +257,7 @@ for(q in 1:Q){
 }}
   
 for (i in 1:2) {
-  modelname <- c("baseline", "noecodist")[i]
+  modelname <- c("Robustness", "Robustness_noecodist")[i]
   # Plot Mean
   A = results[i,,,2,3]/results[i,,,1,3]
   rownames(A) = sweep
@@ -312,7 +312,7 @@ for (i in 1:2) {
     scale_fill_gradient2(midpoint = 1, low = "blue", mid = "grey90", high = "red") +
     labs(x="Fuel Enc. SD. ", y="Fuel Enc. Int. ", title="Matrix") 
   
-  ggsave(paste0(modelname, "/FuelShape_M_harvest.pdf"), bob1, width = 6, height = 6)
+  ggsave(paste0(modelname, "/harvest_FuelShape_M.pdf"), bob1, width = 6, height = 6)
   
   # Plot Lower HPDI (HARVEST)
   A = results[i,,,3,4]/results[i,,,1,4]
@@ -326,7 +326,7 @@ for (i in 1:2) {
     scale_fill_gradient2(midpoint = 1, low = "blue", mid = "grey90", high = "red") +
     labs(x="Fuel Enc. SD. ", y="Fuel Enc. Int. ", title="Matrix") 
   
-  ggsave(paste0(modelname, "/FuelShape_L_harvest.pdf"), bob2, width = 6, height = 6)
+  ggsave(paste0(modelname, "/harvest_FuelShape_L.pdf"), bob2, width = 6, height = 6)
   
   # Plot Upper HPDI (HARVEST)
   A = results[i,,,4,4]/results[i,,,1,4]
@@ -340,7 +340,7 @@ for (i in 1:2) {
     scale_fill_gradient2(midpoint = 1, low = "blue", mid = "grey90", high = "red") +
     labs(x="Fuel Enc. SD.  ", y="Fuel Enc. Int.  ", title="Matrix") 
   
-  ggsave(paste0(modelname, "/FuelShape_H_harvest.pdf"), bob3, width = 6, height = 6)    
+  ggsave(paste0(modelname, "/harvest_FuelShape_H.pdf"), bob3, width = 6, height = 6)    
 }
 
        

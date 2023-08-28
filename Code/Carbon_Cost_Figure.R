@@ -3,9 +3,12 @@ cols = (viridis(4))[c(2,3,4,1)]
 cols[3] = "chocolate4"
 
 #note phylopic 2.0 launched, rphylopic doesn't work now
-caribou = image_data("e6e864fd-8e3d-435f-9db3-dc6869c589f1", size = 128)[[1]]
-char = image_data("68304786-f291-4115-9ccd-ead068ba6f19", size = "thumb")[[1]]
-goose = image_data("7b8fb3d4-0cac-4552-8cd1-bd493b7de679", size="thumb")[[1]]
+uuid <- get_uuid(name = "Canis lupus", n = 1)
+# Get the image for that uuid
+
+caribou = get_phylopic("e6e864fd-8e3d-435f-9db3-dc6869c589f1")
+char = get_phylopic("68304786-f291-4115-9ccd-ead068ba6f19")
+goose = get_phylopic("7b8fb3d4-0cac-4552-8cd1-bd493b7de679")
 
 png("Figure2.png", height=4, width=6, 
     units="in", res=480, pointsize=10)
@@ -15,35 +18,35 @@ layout(matrix(c(1,2,3,4), ncol=4, byrow=TRUE),
 nsamps = 100
 alp = 0.15
 pullasamp = sample(1:6000, nsamps) 
-plot(density(samps$harvest_est[,7,1]/1000)$y, 
-     density(samps$harvest_est[,7,1]/1000)$x, xlab="", type="n", xaxt="n",
+plot(density(weight[[4]]/1000)$y, 
+     density(weight[[4]]/1000)$x, xlab="", type="n", xaxt="n",
      main="(a) Edible weight", ylab="Tonnes", xlim=c(0,1), 
-     ylim=c(5, 140))
+     ylim=c(5, 130))
 for (i in 1:4) {
-    abline(h=samps$harvest_est[pullasamp,7,i]/1000, 
+    abline(h=weight[[i]][pullasamp]/1000, 
            col=alpha(cols[i], alp))
 }
 box()
-plot(density(samps$market_cost_est[,7,1]/1000000)$y, 
-     density(samps$market_cost_est[,7,1]/1000000)$x, xlab="", type="n", xaxt="n",
+plot(density(cost[[4]]/1000000)$y, 
+     density(cost[[4]]/1000000)$x, xlab="", type="n", xaxt="n",
      main="(b) Substitution value", ylab="Million $", xlim=c(0,100), 
      ylim=c(0.1, 3.4))
 for (i in 1:4) {
-  abline(h=samps$market_cost_est[pullasamp,7,i]/1000000, 
+  abline(h=cost[[i]][pullasamp]/1000000, 
          col=alpha(cols[i], alp))
 }
 box()
-plot(density(samps$carbon_cost_est[,7,1,1]/1000)$y, 
-     density(samps$carbon_cost_est[,7,1,1]/1000)$x, xlab="", 
+plot(density(emissions[[4]][[4]]/1000)$y, 
+     density(emissions[[4]][[4]]/1000)$x, xlab="", 
      type="n",  xaxt="n",
      main=expression(bold(paste("(c) ", CO[2], " emitted by substitutes"))), 
      ylab="Tonnes", xlim=c(0.15,3.85), ylim=c(20, 1200))
 for (i in 1:4) {
     for (j in 1:4) {
       segments(x0=rep(j-1,nsamps), 
-               y0=samps$carbon_cost_est[pullasamp,7,i,j]/1000,
+               y0=emissions[[i]][[j]][pullasamp]/1000,
                x1=rep(j-0.01, nsamps), 
-               y1=samps$carbon_cost_est[pullasamp,7,i,j]/1000, 
+               y1=emissions[[i]][[j]][pullasamp]/1000, 
                col=alpha(cols[i], alp))
   }
 }

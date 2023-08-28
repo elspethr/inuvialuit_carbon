@@ -26,11 +26,12 @@ source("Code/Process_Tooniktoyook.R")
 ### Run Stan model ###
 source("Code/Fit_Model.R")
 
-### NEED to check from here with new model version ###
+### Run Stan model with alt version with no species dists ###
+#source("Code/Fit_Model_noecodist.R")
 
 ### Make figures ###
 source("Code/Heaping_Figure.R")
-source("Code/Carbon_Cost_Figure.R")
+source("Code/Carbon_Cost_Figure.R") 
 
 ### Make tables and in-text calculations ###
 source("Code/Edible_Weight_Table_and_Calculations.R")

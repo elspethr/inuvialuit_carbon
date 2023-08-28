@@ -5,30 +5,27 @@ bene2021 = c(282, 1227, 236, 85, 642, 295)
 
 groupnames = c("Birds", "Fish", "Mammals", "Total")
 
-# harvest per beneficiary
-Table1[4,1]/2767
-
-# harvest per beneficiary by community
-comkgtotal = apply(samps$harvest_est[,,4], 2, mean)
-comkgtotal/c(bene2021, 2767)
-
 # Table 2 (total cost)
-HPDI_temp = apply(samps$market_cost_est[,7,], 2, HPDI, 0.90)
-Table2 = cbind.data.frame(mean=apply(samps$market_cost_est[,7,], 2, mean),
-                           sd=apply(samps$market_cost_est[,7,], 2, sd),
-                           lo=HPDI_temp[1,], hi=HPDI_temp[2,])
+HPDI_temp = matrix(unlist(lapply(cost, HPDI, 0.90)), ncol=2, byrow=TRUE)
+Table2 = cbind.data.frame(mean=unlist(lapply(cost, mean)),
+                          sd=unlist(lapply(cost, sd)),
+                          lo=HPDI_temp[,1], hi=HPDI_temp[,2])
 rownames(Table2) = groupnames
-write.table(round(Table2,0), "table2.txt", sep="\t", row.names=TRUE)
+write.table(round(Table2, 0), "table2.txt", sep="\t")
 
 # total cost
-Table2[4,1]
+print("Total cost")
+print(Table2[4,1])
 
 # total cost per kg 
-Table2$mean/Table1$mean
+print("Cost per kg")
+print(Table2$mean/Table1$mean)
 
 # total cost per beneficiary
-Table2[4,1]/2767
+print("Cost per beneficiary")
+print(Table2[4,1]/2767)
 
 # total cost per beneficiary, by community
-comCADtotal = apply(samps$market_cost_est[,,4], 2, mean)
-comCADtotal/c(bene2021, 2767)
+comCADtotal = unlist(lapply(cost_vill, mean))
+print("Cost per beneficiary by community")
+print(comCADtotal/c(bene2021, 2767))
