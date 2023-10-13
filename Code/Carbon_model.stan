@@ -40,7 +40,7 @@ transformed data{
   
   array[N_took] real log_Fuel;
   array[N_took] int zero_EW;
-  array[N_took] real log_EW;
+   array[N_took] real log_EW;
   
   log_HM = log(harv_meas);
   
