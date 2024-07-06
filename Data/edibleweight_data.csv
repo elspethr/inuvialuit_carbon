@@ -1,6 +1,6 @@
 ﻿Group,Type,Name,Edible_weight,Source,Note
 Seal,Ringed,Seal - Ringed,13,Usher 2000,Includes 2.5 kg blubber
-Whale,Beluga,Whale - Beluga,136.4,Berger 1977,Muktuk only
+Whale,Beluga,Whale - Beluga,136.4,Berger 1977,Muktuk only; reported in Ashley 2002
 Bear,Polar,Bear - Polar,114,Usher 1971,
 Caribou,Barren-Ground,Caribou - Barren Ground,36.5,New,Average of Porcupine and Bluenose
 Caribou,Porcupine,Caribou - Porcupine,37,Usher 2000,
@@ -8,7 +8,7 @@ Caribou,Bluenose,Caribou - Bluenose,36,Usher 2000,
 Caribou,Union Dolphin,Caribou - Union Dolphin,33,Usher 2000,Barren-ground but smaller
 Caribou,Banks Island,Caribou - Banks Island,29,Usher 2000,
 Caribou,Peary,Caribou - Peary,29,New,Assume Banks Island are Peary
-Caribou,Woodland,Caribou - Woodland,58.6,New,Takes ratio of Berger's estimates (provided in Ashley 2000) adjusted to Usher's more conservative approach
+Caribou,Woodland,Caribou - Woodland,58.6,New,Takes ratio of Berger's estimates (provided in Ashley 2002) adjusted to Usher's more conservative approach
 Muskox,,Muskox,69,Usher 2000,
 Moose,,Moose,140,Usher 2000,
 Dall's sheep,,Dall's sheep,23,Usher 2000,
@@ -36,7 +36,7 @@ Canvasback,,Canvasback,0.86,New,"Average weight on allaboutobirds.org multiplied
 Merganser,Common,Merganser - Common,1.07,New,Average weight on allaboutobirds.org multiplied by Usher's conversion
 Teal,,Teal,0.22,New,Average weight on allaboutobirds.org multiplied by Usher's conversion
 Ducks - unknown,,Duck - Unknown,0.67,New,Median of non-eider ducks
-Loon,Common,Loon - Common,1.1,JBNQNHRC 1982,
+Loon,Common,Loon - Common,1.1,JBNQNHRC 1982,Reported in Ashley 2002
 Crane,Sandhill,Crane - Sandhill,2.9,New,Average weight on allaboutobirds.org multiplied by Usher's conversion
 Ptarmigan,Willow,Ptarmigan - Willow,0.5,Usher 2000,
 Ptarmigan,Rock,Ptarmigan - Rock,0.35,Usher 2000,
@@ -62,4 +62,4 @@ Flounders,,Flounder,0.5,Brown et al. 2016,
 Sculpin,Fourhorn,Sculpin - Fourhorn,0.09,New,"For common length of 30cm, estimated on fishbase.org; assume edible portion only 0.25"
 Salmon,,Salmon,1.68,New,"For a 50cmsalmon; L-W data from tshawytscha, nerka, ksutch, gorbuscha and keta; estimated on fishbase.org"
 Smelt,,Smelt,0.06,New,"For average length in studies of 23 cm, estimated on fishbase.org"
-Grayling,Arctic,Grayling - Arctic,0.9,Gamble 1984,
+Grayling,Arctic,Grayling - Arctic,0.9,Gamble 1984,Reported in Ashley 2002
